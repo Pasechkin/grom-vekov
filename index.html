@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>История ЕГЭ — Тренажёр</title>
+
+  <!-- Telegram Mini App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Tailwind CSS CDN с поддержкой переключения светлой/тёмной темы через класс -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#edf2ff',
+              100: '#dbe4ff',
+              200: '#bac8ff',
+              500: '#4c6ef5',
+              600: '#3b5bdb',
+              700: '#364fc7',
+              800: '#2b40a6'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Шрифт Inter с полной поддержкой кириллицы и комбинируемых ударений -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    html, body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    /* 3D-анимация переворота карточки */
+    .flip-scene {
+      perspective: 1200px;
+    }
+
+    .flip-card {
+      position: relative;
+      width: 100%;
+      min-height: 300px;
+      transform-style: preserve-3d;
+      transition: transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .flip-card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face {
+      position: relative;
+      width: 100%;
+      min-height: 300px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .flip-back {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      min-height: 300px;
+      transform: rotateY(180deg);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* Плавное появление элементов */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.22s ease-out both;
+    }
+
+    /* Скрытие полосы прокрутки в горизонтальных фильтрах на мобильных */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200 selection:bg-brand-100 selection:text-brand-800">
+
+  <!-- Скрытый input для локальной загрузки одного или нескольких JSON-файлов -->
+  <input id="json-file-input" type="file" accept=".json,application/json" multiple class="hidden" />
+  <input id="progress-file-input" type="file" accept=".json,application/json" class="hidden" />
+
+  <!-- Основная оболочка приложения -->
+  <div id="app" class="min-h-screen flex flex-col pb-20 md:pb-8">
+
+    <!-- ==================== ШАПКА ==================== -->
+    <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200/80 dark:border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 py-3">
+        <div class="flex items-center justify-between gap-3">
+          <!-- Логотип и название -->
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-extrabold text-sm shadow-sm shrink-0">
+              ЕГЭ
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <h1 class="text-base sm:text-lg font-extrabold tracking-tight truncate">
+                  История ЕГЭ — Тренажёр
+                </h1>
+                <span id="demo-badge" class="hidden text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-200 shrink-0">
+                  Демо
+                </span>
+              </div>
+              <div class="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400">
+                <span id="header-mastery" class="font-semibold text-slate-700 dark:text-slate-300">Изучено: 0 / 0</span>
+                <span class="text-slate-300 dark:text-slate-700">•</span>
+                <span id="header-streak" title="Дней занятий подряд">🔥 0 дн.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Правые кнопки управления -->
+          <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              onclick="triggerJsonUpload()"
+              class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 dark:bg-brand-600/20 dark:text-brand-200 dark:hover:bg-brand-600/30 transition cursor-pointer"
+              title="Добавить локальный .json файл с карточками"
+            >
+              <span>+</span>
+              <span>Добавить .json</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="toggleTheme()"
+              id="btn-theme"
+              class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition cursor-pointer"
+              title="Переключить светлую/тёмную тему"
+              aria-label="Переключить тему"
+            >
+              🌙
+            </button>
+
+            <button
+              type="button"
+              onclick="openSettingsModal()"
+              class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition cursor-pointer"
+              title="Настройки, база и экспорт прогресса"
+              aria-label="Настройки"
+            >
+              ⚙️
+            </button>
+          </div>
+        </div>
+
+        <!-- Навигация по режимам (для десктопа и планшетов) -->
+        <nav class="hidden md:flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800" aria-label="Режимы обучения">
+          <button type="button" data-mode="cards" onclick="switchMode('cards')" class="nav-desktop-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 cursor-pointer">
+            <span>🃏</span><span>Карточки</span>
+          </button>
+          <button type="button" data-mode="quiz" onclick="switchMode('quiz')" class="nav-desktop-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 cursor-pointer">
+            <span>✅</span><span>Тест</span>
+          </button>
+          <button type="button" data-mode="browse" onclick="switchMode('browse')" class="nav-desktop-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 cursor-pointer">
+            <span>📚</span><span>Справочник</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Всплывающее уведомление (Toast) -->
+    <div id="toast-wrap" class="fixed top-4 right-4 left-4 sm:left-auto sm:w-96 z-50 pointer-events-none hidden">
+      <div id="toast-box" class="pointer-events-auto rounded-2xl px-4 py-3 shadow-lg border text-sm font-medium flex items-center justify-between gap-3 fade-in"></div>
+    </div>
+
+    <!-- ==================== ОСНОВНОЙ КОНТЕНТ ==================== -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-5 space-y-5">
+
+      <!-- Панель выбора темы и фильтров -->
+      <section id="controls-panel" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 shadow-xs space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+          <!-- Кнопка открытия выбора темы -->
+          <button
+            type="button"
+            onclick="openTopicsModal()"
+            class="flex-1 flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 hover:border-brand-500 transition text-left cursor-pointer min-w-0"
+          >
+            <div class="min-w-0">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Выбранная тема</div>
+              <div id="selected-topic-label" class="text-sm font-bold text-slate-900 dark:text-white truncate">Все темы</div>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 shrink-0">
+              Выбрать ▾
+            </span>
+          </button>
+
+          <!-- Кнопка «Перемешать» -->
+          <button
+            type="button"
+            onclick="shuffleActiveCards()"
+            class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-200 transition flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+          >
+            <span>🔀</span>
+            <span>Перемешать</span>
+          </button>
+        </div>
+
+        <!-- Фильтры (пилюли) -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5" id="filter-pills">
+          <button type="button" data-filter="all" onclick="setTypeFilter('all')" class="filter-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition cursor-pointer">
+            Все типы
+          </button>
+          <button type="button" data-filter="date" onclick="setTypeFilter('date')" class="filter-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition cursor-pointer">
+            Только даты
+          </button>
+          <button type="button" data-filter="fact" onclick="setTypeFilter('fact')" class="filter-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition cursor-pointer">
+            Факты, имена, термины
+          </button>
+          <button type="button" data-filter="unmastered" onclick="setTypeFilter('unmastered')" class="filter-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition cursor-pointer">
+            Только сложные / неизученные
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== РЕЖИМ 1: КАРТОЧКИ ==================== -->
+      <section id="view-cards" class="space-y-4 fade-in">
+        <!-- Верхняя строка настроек карточек -->
+        <div class="max-w-2xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <!-- Переключатель направления -->
+          <label class="inline-flex items-center gap-2.5 cursor-pointer select-none bg-white dark:bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+            <input id="toggle-reverse-cards" type="checkbox" onchange="toggleReverseDirection()" class="sr-only peer" />
+            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-700 peer-checked:bg-brand-600 rounded-full relative transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-5"></div>
+            <span class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200">
+              Перевернуть направление: <span id="direction-label-cards" class="text-brand-600 dark:text-brand-200">Вопрос → Ответ</span>
+            </span>
+          </label>
+
+          <!-- Счётчик текущей колоды -->
+          <div class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-between sm:justify-end gap-3">
+            <span id="deck-counter">0 / 0</span>
+            <span id="deck-mastered-pill" class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800/70 text-xs font-bold">
+              Освоено: 0%
+            </span>
+          </div>
+        </div>
+
+        <!-- Полоса прогресса текущей выборки -->
+        <div class="max-w-2xl mx-auto w-full h-2 bg-slate-200/80 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="deck-progress-bar" class="h-full bg-brand-600 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <!-- Сцена карточки -->
+        <div id="cards-stage" class="max-w-2xl mx-auto"></div>
+
+        <!-- Подсказка по горячим клавишам (только десктоп) -->
+        <div class="hidden md:flex max-w-2xl mx-auto items-center justify-center gap-4 text-xs text-slate-400 pt-1">
+          <span><kbd class="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">Пробел</kbd> перевернуть</span>
+          <span><kbd class="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">1</kbd> не помню</span>
+          <span><kbd class="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">2</kbd> повторить</span>
+          <span><kbd class="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">3</kbd> знаю</span>
+          <span><kbd class="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">← / →</kbd> листать</span>
+        </div>
+      </section>
+
+      <!-- ==================== РЕЖИМ 2: ТЕСТ ==================== -->
+      <section id="view-quiz" class="hidden space-y-4 fade-in">
+        <div class="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs space-y-5">
+          <!-- Настройки теста -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Вопросов:</span>
+              <button type="button" onclick="setQuizLength(10)" data-qlen="10" class="qlen-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer">10</button>
+              <button type="button" onclick="setQuizLength(20)" data-qlen="20" class="qlen-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer">20</button>
+              <button type="button" onclick="setQuizLength(30)" data-qlen="30" class="qlen-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer">30</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                onclick="toggleReverseDirection()"
+                id="btn-reverse-quiz"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-brand-500 transition cursor-pointer"
+              >
+                ⇄ Вопрос → Ответ
+              </button>
+              <button
+                type="button"
+                onclick="startNewQuiz()"
+                class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white hover:bg-brand-700 transition cursor-pointer"
+              >
+                Начать заново
+              </button>
+            </div>
+          </div>
+
+          <!-- Контейнер вопроса / итогов -->
+          <div id="quiz-stage"></div>
+        </div>
+      </section>
+
+      <!-- ==================== РЕЖИМ 3: СПРАВОЧНИК ==================== -->
+      <section id="view-browse" class="hidden space-y-4 fade-in">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 sm:p-5 shadow-xs space-y-4">
+          <!-- Поиск -->
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">🔍</span>
+            <input
+              id="browse-search"
+              type="search"
+              oninput="onBrowseSearchInput(this.value)"
+              placeholder="Поиск по датам, именам, событиям и темам (ударения не обязательны)..."
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500 transition"
+            />
+          </div>
+
+          <!-- Фильтр по статусу -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-1.5" id="browse-status-pills">
+              <button type="button" data-status="all" onclick="setBrowseStatus('all')" class="status-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer">Все</button>
+              <button type="button" data-status="new" onclick="setBrowseStatus('new')" class="status-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer">Неизученные</button>
+              <button type="button" data-status="hard" onclick="setBrowseStatus('hard')" class="status-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer">Сложные</button>
+              <button type="button" data-status="learning" onclick="setBrowseStatus('learning')" class="status-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer">Повторить</button>
+              <button type="button" data-status="mastered" onclick="setBrowseStatus('mastered')" class="status-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer">Изученные</button>
+            </div>
+
+            <div id="browse-count" class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Найдено: 0
+            </div>
+          </div>
+
+          <!-- Список карточек -->
+          <div id="browse-list" class="space-y-2.5"></div>
+
+          <!-- Кнопка «Показать ещё 50» -->
+          <div id="browse-load-more-wrap" class="hidden pt-2 text-center">
+            <button
+              type="button"
+              onclick="loadMoreBrowse()"
+              class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition cursor-pointer"
+            >
+              Показать ещё 50
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==================== НИЖНЯЯ НАВИГАЦИЯ (МОБИЛЬНЫЕ) ==================== -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800 px-2 py-1.5" aria-label="Мобильная навигация">
+      <div class="grid grid-cols-3 gap-1 max-w-md mx-auto">
+        <button type="button" data-mode="cards" onclick="switchMode('cards')" class="nav-mobile-btn py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition cursor-pointer">
+          <span class="text-base">🃏</span><span>Карточки</span>
+        </button>
+        <button type="button" data-mode="quiz" onclick="switchMode('quiz')" class="nav-mobile-btn py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition cursor-pointer">
+          <span class="text-base">✅</span><span>Тест</span>
+        </button>
+        <button type="button" data-mode="browse" onclick="switchMode('browse')" class="nav-mobile-btn py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition cursor-pointer">
+          <span class="text-base">📚</span><span>Справочник</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ==================== МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА БАЗЫ (FALLBACK) ==================== -->
+  <div id="fallback-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5 fade-in">
+      <div class="flex items-start gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-600/20 text-brand-600 dark:text-brand-200 flex items-center justify-center text-2xl shrink-0">
+          📂
+        </div>
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Загрузите базу карточек</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+            Файл <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-xs font-semibold">history_base.json</code> не удалось загрузить автоматически (например, сайт открыт локально с компьютера). Выберите файл вручную или откройте демо-режим.
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <button
+          type="button"
+          onclick="triggerJsonUpload()"
+          class="w-full py-3.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>📁</span>
+          <span>Загрузить файл базы (.json)</span>
+        </button>
+
+        <button
+          type="button"
+          onclick="loadDemoDatabase()"
+          class="w-full py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm transition cursor-pointer"
+        >
+          Открыть демо-режим (8 карточек)
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-400 text-center">
+        На GitHub Pages и в Telegram база <code class="font-semibold">history_base.json</code> загрузится сама.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== МОДАЛЬНОЕ ОКНО: ВЫБОР ТЕМЫ ==================== -->
+  <div id="topics-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[85vh] flex flex-col border border-slate-200 dark:border-slate-800 shadow-2xl fade-in">
+      <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Выбор темы</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Показан прогресс освоения по каждой теме</p>
+        </div>
+        <button type="button" onclick="closeTopicsModal()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center font-bold cursor-pointer">✕</button>
+      </div>
+
+      <div class="p-3 border-b border-slate-100 dark:border-slate-800">
+        <input
+          id="topic-search-input"
+          type="search"
+          oninput="renderTopicsList(this.value)"
+          placeholder="Найти тему..."
+          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+        />
+      </div>
+
+      <div id="topics-modal-list" class="overflow-y-auto p-3 space-y-1.5 flex-1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== МОДАЛЬНОЕ ОКНО: НАСТРОЙКИ ==================== -->
+  <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5 fade-in max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Настройки и библиотека</h2>
+        <button type="button" onclick="closeSettingsModal()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center font-bold cursor-pointer">✕</button>
+      </div>
+
+      <!-- Статистика -->
+      <div class="grid grid-cols-3 gap-2.5 text-center">
+        <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/70 dark:border-emerald-800/60">
+          <div id="stat-mastered" class="text-lg font-extrabold text-emerald-700 dark:text-emerald-300">0</div>
+          <div class="text-[11px] font-semibold text-emerald-800/80 dark:text-emerald-400">Знаю</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200/70 dark:border-amber-800/60">
+          <div id="stat-learning" class="text-lg font-extrabold text-amber-700 dark:text-amber-300">0</div>
+          <div class="text-[11px] font-semibold text-amber-800/80 dark:text-amber-400">Повторить</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200/70 dark:border-rose-800/60">
+          <div id="stat-hard" class="text-lg font-extrabold text-rose-700 dark:text-rose-300">0</div>
+          <div class="text-[11px] font-semibold text-rose-800/80 dark:text-rose-400">Сложные</div>
+        </div>
+      </div>
+
+      <!-- Загруженные базы -->
+      <div class="space-y-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Библиотека карточек</div>
+        <div id="settings-sources-info" class="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-200/70 dark:border-slate-700"></div>
+        <button
+          type="button"
+          onclick="triggerJsonUpload()"
+          class="w-full py-2.5 px-4 rounded-xl bg-brand-50 dark:bg-brand-600/20 text-brand-700 dark:text-brand-200 hover:bg-brand-100 dark:hover:bg-brand-600/30 font-semibold text-sm transition cursor-pointer"
+        >
+          + Добавить свой файл базы (.json)
+        </button>
+      </div>
+
+      <!-- Экспорт / Импорт прогресса -->
+      <div class="space-y-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Резервная копия прогресса</div>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onclick="exportProgress()"
+            class="py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition cursor-pointer"
+          >
+            ⬇ Сохранить JSON
+          </button>
+          <button
+            type="button"
+            onclick="triggerProgressImport()"
+            class="py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold transition cursor-pointer"
+          >
+            ⬆ Загрузить JSON
+          </button>
+        </div>
+      </div>
+
+      <!-- Сброс прогресса (с безопасным подтверждением без window.confirm) -->
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div id="reset-initial-wrap">
+          <button
+            type="button"
+            onclick="showResetConfirm()"
+            class="w-full py-2.5 px-4 rounded-xl border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 text-sm font-semibold transition cursor-pointer"
+          >
+            Сбросить весь прогресс
+          </button>
+        </div>
+        <div id="reset-confirm-wrap" class="hidden space-y-2 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900">
+          <p class="text-xs font-semibold text-rose-800 dark:text-rose-200">Точно очистить все статусы карточек и серию дней?</p>
+          <div class="flex gap-2">
+            <button type="button" onclick="confirmResetProgress()" class="flex-1 py-2 rounded-lg bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 cursor-pointer">Да, сбросить</button>
+            <button type="button" onclick="hideResetConfirm()" class="flex-1 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold cursor-pointer">Отмена</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. КОНФИГУРАЦИЯ БИБЛИОТЕКИ БАЗ ДАННЫХ
+       Чтобы в будущем добавить новые учебники или колоды (например, 10 класс,
+       культуру или карты), просто положите JSON-файл рядом с index.html
+       и добавьте его имя в массив DATABASE_FILES через запятую.
+       ========================================================================= */
+    const DATABASE_FILES = [
+      'history_base.json'
+      // Пример расширения библиотеки в будущем:
+      // 'textbook_10_class.json',
+      // 'culture_extra.json'
+    ];
+
+    /* Демо-карточки для мгновенного предпросмотра без внешнего файла */
+    const DEMO_CARDS = [
+      { id: 1, topic: 'Тема 1. V век – 978 год.', type: 'date', front: '862', back: 'Призвание варягов во главе с Рю́риком на княжение в Новгород. Начало династии Рю́риковичей.' },
+      { id: 2, topic: 'Тема 1. V век – 978 год.', type: 'date', front: '945', back: 'Восстание древля́н, гибель киевского князя И́горя. Подавление восстания княгиней О́льгой и проведение налоговой реформы (уроки и погосты).' },
+      { id: 3, topic: 'Тема 2. 978-1132 годы.', type: 'fact', front: 'Яросла́в Му́дрый', back: '1019–1054. Князь киевский. Создание Русской Правды, строительство Софийского собора в Киеве, разгром печенегов в 1036 г.' },
+      { id: 4, topic: 'Тема 9. 1613-1689 годы.', type: 'fact', front: 'Афана́сий Орди́н-Нащо́кин', back: 'Дипломат и государственный деятель при Алексее Михайловиче, глава Посольского приказа, автор Новоторгового устава (1667) и Андрусовского перемирия.' },
+      { id: 5, topic: 'Тема 20. 1914-1917 годы.', type: 'date', front: '19 июля (1 августа) 1914', back: 'Объявление Германией войны России. Вступление Российской империи в Первую мировую войну.' },
+      { id: 6, topic: 'Тема 22. 1918-1921 годы.', type: 'date', front: 'январь 1919', back: 'Декрет о продразвёрстке — обязательной сдаче крестьянами государству излишков хлеба в рамках политики «военного коммунизма».' },
+      { id: 7, topic: 'Тема 26. 1941-1945 годы.', type: 'fact', front: 'Гео́ргий Жу́ков', back: 'Маршал Советского Союза, четырежды Герой СССР. Руководил обороной Ленинграда и Москвы, принимал капитуляцию Германии и Парад Победы 24 июня 1945 г.' },
+      { id: 8, topic: 'Тема 33. 1985-1991 годы.', type: 'date', front: '26 апреля 1986', back: 'Авария на Черно́быльской АЭС — крупнейшая техногенная катастрофа в истории атомной энергетики.' }
+    ];
+
+    /* =========================================================================
+       2. ИНИЦИАЛИЗАЦИЯ TELEGRAM MINI APP
+       ========================================================================= */
+    try {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+      }
+    } catch (e) {
+      console.warn('Telegram WebApp SDK недоступен:', e);
+    }
+
+    /* =========================================================================
+       3. СОСТОЯНИЕ ПРИЛОЖЕНИЯ И СОХРАНЕНИЕ ПРОГРЕССА
+       ========================================================================= */
+    const STORAGE_PROGRESS_KEY = 'ege_history_trainer_progress_v1';
+    const STORAGE_PREFS_KEY = 'ege_history_trainer_prefs_v1';
+
+    let allCards = [];            // Полная объединённая база карточек
+    let loadedSources = [];       // Названия загруженных источников
+    let isDemoMode = false;
+
+    // Прогресс: { statuses: { [cardKey]: 'hard' | 'learning' | 'mastered' }, streak: { lastDate: 'YYYY-MM-DD', count: number, todayReviewed: number } }
+    let progress = loadProgress();
+
+    // Настройки интерфейса
+    let prefs = loadPrefs();
+
+    // Состояние текущей сессии карточек
+    let sessionQueue = [];
+    let sessionIndex = 0;
+    let isCardFlipped = false;
+
+    // Состояние теста
+    let quizState = {
+      length: 10,
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      answered: false,
+      selectedIndex: null,
+      mistakes: [],
+      finished: false
+    };
+
+    // Состояние справочника
+    let browseState = {
+      query: '',
+      statusFilter: 'all',
+      limit: 50
+    };
+
+    /* Удаление знака ударения (\u0301) и нормализация строки для поиска и стабильных ключей */
+    function normalizeText(str) {
+      return String(str || '')
+        .replace(/\u0301/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    /* Простой быстрый хеш (djb2) для стабильного ключа карточки независимо от файла */
+    function hashString(str) {
+      let h = 5381;
+      for (let i = 0; i < str.length; i++) {
+        h = ((h << 5) + h) + str.charCodeAt(i);
+        h = h & h;
+      }
+      return (h >>> 0).toString(36);
+    }
+
+    function getCardKey(card) {
+      const base = normalizeText(card.topic) + '||' + normalizeText(card.front);
+      return 'c_' + hashString(base);
+    }
+
+    function getTodayISO() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_PROGRESS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            statuses: parsed.statuses && typeof parsed.statuses === 'object' ? parsed.statuses : {},
+            streak: parsed.streak || { lastDate: null, count: 0, todayReviewed: 0 }
+          };
+        }
+      } catch (e) {
+        console.error('Ошибка чтения прогресса:', e);
+      }
+      return { statuses: {}, streak: { lastDate: null, count: 0, todayReviewed: 0 } };
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_PROGRESS_KEY, JSON.stringify(progress));
+      } catch (e) {
+        console.error('Ошибка сохранения прогресса:', e);
+      }
+    }
+
+    function loadPrefs() {
+      try {
+        const raw = localStorage.getItem(STORAGE_PREFS_KEY);
+        if (raw) {
+          return {
+            mode: 'cards',
+            selectedTopic: 'ALL',
+            typeFilter: 'all',
+            reverseDirection: false,
+            theme: 'light',
+            quizLength: 10,
+            ...JSON.parse(raw)
+          };
+        }
+      } catch (e) {}
+      return {
+        mode: 'cards',
+        selectedTopic: 'ALL',
+        typeFilter: 'all',
+        reverseDirection: false,
+        theme: 'light',
+        quizLength: 10
+      };
+    }
+
+    function savePrefs() {
+      try {
+        localStorage.setItem(STORAGE_PREFS_KEY, JSON.stringify(prefs));
+      } catch (e) {}
+    }
+
+    /* Обновление ежедневной серии (streak) при оценке карточки */
+    function recordDailyActivity() {
+      const today = getTodayISO();
+      const s = progress.streak || { lastDate: null, count: 0, todayReviewed: 0 };
+
+      if (s.lastDate === today) {
+        s.todayReviewed = (s.todayReviewed || 0) + 1;
+      } else {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yISO = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
+
+        if (s.lastDate === yISO) {
+          s.count = (s.count || 0) + 1;
+        } else {
+          s.count = 1;
+        }
+        s.lastDate = today;
+        s.todayReviewed = 1;
+      }
+      progress.streak = s;
+    }
+
+    /* =========================================================================
+       4. ЗАГРУЗКА ВНЕШНИХ JSON-ФАЙЛОВ И FALLBACK
+       ========================================================================= */
+    function ingestCards(rawArray, sourceName, replaceExisting = false) {
+      if (!Array.isArray(rawArray)) return 0;
+
+      if (replaceExisting) {
+        allCards = [];
+        loadedSources = [];
+      }
+
+      const existingKeys = new Set(allCards.map((c) => c._key));
+      let addedCount = 0;
+
+      rawArray.forEach((item, idx) => {
+        if (!item || (!item.front && !item.back)) return;
+        const card = {
+          id: item.id !== undefined ? item.id : allCards.length + idx + 1,
+          topic: String(item.topic || 'Без темы').trim(),
+          type: item.type === 'date' ? 'date' : 'fact',
+          front: String(item.front || '').trim(),
+          back: String(item.back || '').trim(),
+          _source: sourceName
+        };
+        card._key = getCardKey(card);
+        card._searchIndex = normalizeText(card.front + ' ' + card.back + ' ' + card.topic);
+
+        if (!existingKeys.has(card._key)) {
+          existingKeys.add(card._key);
+          allCards.push(card);
+          addedCount++;
+        }
+      });
+
+      if (addedCount > 0 && !loadedSources.includes(sourceName)) {
+        loadedSources.push(sourceName);
+      }
+      return addedCount;
+    }
+
+    async function loadInitialDatabases() {
+      let totalLoaded = 0;
+
+      for (const file of DATABASE_FILES) {
+        try {
+          const response = await fetch(file, { cache: 'no-cache' });
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          const data = await response.json();
+          totalLoaded += ingestCards(data, file, false);
+        } catch (err) {
+          console.warn(`Не удалось загрузить ${file}:`, err);
+        }
+      }
+
+      if (totalLoaded > 0) {
+        isDemoMode = false;
+        document.getElementById('demo-badge').classList.add('hidden');
+        document.getElementById('fallback-modal').classList.add('hidden');
+        afterDatabaseUpdated();
+      } else {
+        // Если fetch() не сработал (например, file://), открываем дружелюбный экран загрузки
+        document.getElementById('fallback-modal').classList.remove('hidden');
+      }
+    }
+
+    function loadDemoDatabase() {
+      isDemoMode = true;
+      ingestCards(DEMO_CARDS, 'Демо-набор', true);
+      document.getElementById('demo-badge').classList.remove('hidden');
+      document.getElementById('fallback-modal').classList.add('hidden');
+      afterDatabaseUpdated();
+      showToast('Открыт демо-режим (8 карточек). Вы можете загрузить свой history_base.json в любой момент.', 'info');
+    }
+
+    function triggerJsonUpload() {
+      const input = document.getElementById('json-file-input');
+      input.value = '';
+      input.click();
+    }
+
+    document.getElementById('json-file-input').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+
+      let totalAdded = 0;
+      const shouldReplaceDemo = isDemoMode;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          if (!Array.isArray(parsed)) {
+            showToast(`Файл "${file.name}" должен содержать JSON-массив карточек.`, 'error');
+            continue;
+          }
+          const added = ingestCards(parsed, file.name, shouldReplaceDemo && i === 0);
+          totalAdded += added;
+        } catch (err) {
+          console.error(err);
+          showToast(`Ошибка чтения JSON в файле "${file.name}".`, 'error');
+        }
+      }
+
+      if (totalAdded > 0) {
+        isDemoMode = false;
+        document.getElementById('demo-badge').classList.add('hidden');
+        document.getElementById('fallback-modal').classList.add('hidden');
+        closeSettingsModal();
+        afterDatabaseUpdated();
+        showToast(`Загружено новых карточек: ${totalAdded}. Всего в базе: ${allCards.length}.`, 'success');
+      } else {
+        showToast('Новых уникальных карточек не найдено (возможно, этот файл уже загружен).', 'info');
+      }
+    });
+
+    function afterDatabaseUpdated() {
+      // Если выбранная ранее тема отсутствует в новой базе — сбрасываем на ALL
+      const topics = getUniqueTopics();
+      if (prefs.selectedTopic !== 'ALL' && !topics.includes(prefs.selectedTopic)) {
+        prefs.selectedTopic = 'ALL';
+        savePrefs();
+      }
+      rebuildSessionQueue(false);
+      updateHeaderStats();
+      updateControlsUI();
+      renderActiveMode();
+    }
+
+    /* =========================================================================
+       5. ФИЛЬТРАЦИЯ И РАБОТА С ТЕМАМИ
+       ========================================================================= */
+    function getUniqueTopics() {
+      const set = new Set();
+      allCards.forEach((c) => set.add(c.topic));
+      return Array.from(set);
+    }
+
+    function getFilteredCards() {
+      return allCards.filter((card) => {
+        if (prefs.selectedTopic !== 'ALL' && card.topic !== prefs.selectedTopic) {
+          return false;
+        }
+        if (prefs.typeFilter === 'date' && card.type !== 'date') {
+          return false;
+        }
+        if (prefs.typeFilter === 'fact' && card.type !== 'fact') {
+          return false;
+        }
+        if (prefs.typeFilter === 'unmastered') {
+          const st = progress.statuses[card._key];
+          if (st === 'mastered') return false;
+        }
+        return true;
+      });
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function rebuildSessionQueue(shouldShuffle = false) {
+      const filtered = getFilteredCards();
+      sessionQueue = shouldShuffle ? shuffleArray(filtered) : [...filtered];
+      sessionIndex = 0;
+      isCardFlipped = false;
+    }
+
+    function shuffleActiveCards() {
+      if (prefs.mode === 'cards') {
+        rebuildSessionQueue(true);
+        renderCardsMode();
+        showToast('Карточки перемешаны!', 'info');
+      } else if (prefs.mode === 'quiz') {
+        startNewQuiz();
+        showToast('Сгенерирован новый перемешанный тест!', 'info');
+      } else {
+        allCards = shuffleArray(allCards);
+        renderBrowseMode();
+        showToast('Список перемешан!', 'info');
+      }
+    }
+
+    function setTypeFilter(filter) {
+      prefs.typeFilter = filter;
+      savePrefs();
+      updateControlsUI();
+      rebuildSessionQueue(false);
+      if (prefs.mode === 'quiz') {
+        startNewQuiz();
+      } else {
+        renderActiveMode();
+      }
+    }
+
+    function selectTopic(topicName) {
+      prefs.selectedTopic = topicName;
+      savePrefs();
+      closeTopicsModal();
+      updateControlsUI();
+      rebuildSessionQueue(false);
+      if (prefs.mode === 'quiz') {
+        startNewQuiz();
+      } else {
+        renderActiveMode();
+      }
+    }
+
+    function toggleReverseDirection() {
+      prefs.reverseDirection = !prefs.reverseDirection;
+      isCardFlipped = false;
+      savePrefs();
+      updateDirectionUI();
+      if (prefs.mode === 'cards') {
+        renderCardsMode();
+      } else if (prefs.mode === 'quiz') {
+        startNewQuiz();
+      }
+    }
+
+    function updateDirectionUI() {
+      const isRev = prefs.reverseDirection;
+      const checkbox = document.getElementById('toggle-reverse-cards');
+      if (checkbox) checkbox.checked = isRev;
+
+      const labelCards = document.getElementById('direction-label-cards');
+      if (labelCards) labelCards.textContent = isRev ? 'Ответ → Вопрос' : 'Вопрос → Ответ';
+
+      const btnQuiz = document.getElementById('btn-reverse-quiz');
+      if (btnQuiz) btnQuiz.textContent = isRev ? '⇄ Ответ → Вопрос' : '⇄ Вопрос → Ответ';
+    }
+
+    function updateControlsUI() {
+      document.getElementById('selected-topic-label').textContent =
+        prefs.selectedTopic === 'ALL' ? `Все темы (${allCards.length})` : prefs.selectedTopic;
+
+      document.querySelectorAll('.filter-pill').forEach((btn) => {
+        const f = btn.getAttribute('data-filter');
+        if (f === prefs.typeFilter) {
+          btn.className = 'filter-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition cursor-pointer bg-brand-600 text-white shadow-xs';
+        } else {
+          btn.className = 'filter-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+        }
+      });
+
+      updateDirectionUI();
+    }
+
+    function updateHeaderStats() {
+      let mastered = 0;
+      allCards.forEach((c) => {
+        if (progress.statuses[c._key] === 'mastered') mastered++;
+      });
+
+      document.getElementById('header-mastery').textContent = `Изучено: ${mastered} / ${allCards.length}`;
+      const streakCount = progress.streak?.count || 0;
+      document.getElementById('header-streak').textContent = `🔥 ${streakCount} дн.`;
+    }
+
+    /* =========================================================================
+       6. ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ И ТЕМЫ ОФОРМЛЕНИЯ
+       ========================================================================= */
+    function switchMode(mode) {
+      prefs.mode = mode;
+      savePrefs();
+
+      ['cards', 'quiz', 'browse'].forEach((m) => {
+        const el = document.getElementById(`view-${m}`);
+        if (m === mode) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+
+      document.querySelectorAll('.nav-desktop-btn').forEach((btn) => {
+        const active = btn.getAttribute('data-mode') === mode;
+        btn.className = active
+          ? 'nav-desktop-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 cursor-pointer bg-brand-600 text-white shadow-xs'
+          : 'nav-desktop-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+      });
+
+      document.querySelectorAll('.nav-mobile-btn').forEach((btn) => {
+        const active = btn.getAttribute('data-mode') === mode;
+        btn.className = active
+          ? 'nav-mobile-btn py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs font-bold transition cursor-pointer text-brand-600 dark:text-brand-200 bg-brand-50 dark:bg-brand-600/20'
+          : 'nav-mobile-btn py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs font-semibold transition cursor-pointer text-slate-500 dark:text-slate-400';
+      });
+
+      renderActiveMode();
+    }
+
+    function renderActiveMode() {
+      if (prefs.mode === 'cards') {
+        renderCardsMode();
+      } else if (prefs.mode === 'quiz') {
+        if (quizState.questions.length === 0) startNewQuiz();
+        else renderQuizMode();
+      } else {
+        renderBrowseMode();
+      }
+    }
+
+    function applyTheme() {
+      const html = document.documentElement;
+      const btn = document.getElementById('btn-theme');
+      if (prefs.theme === 'dark') {
+        html.classList.add('dark');
+        if (btn) btn.textContent = '☀️';
+      } else {
+        html.classList.remove('dark');
+        if (btn) btn.textContent = '🌙';
+      }
+    }
+
+    function toggleTheme() {
+      prefs.theme = prefs.theme === 'dark' ? 'light' : 'dark';
+      savePrefs();
+      applyTheme();
+    }
+
+    /* =========================================================================
+       7. РЕЖИМ 1: КАРТОЧКИ И ИНТЕРВАЛЬНОЕ ПОВТОРЕНИЕ
+       ========================================================================= */
+    function renderCardsMode() {
+      const stage = document.getElementById('cards-stage');
+      const total = sessionQueue.length;
+
+      // Считаем процент освоенных в текущей выборке
+      const uniqueInFilter = getFilteredCards();
+      const masteredInFilter = uniqueInFilter.filter((c) => progress.statuses[c._key] === 'mastered').length;
+      const pct = uniqueInFilter.length > 0 ? Math.round((masteredInFilter / uniqueInFilter.length) * 100) : 0;
+
+      document.getElementById('deck-counter').textContent = total > 0 ? `Карточка ${Math.min(sessionIndex + 1, total)} из ${total}` : '0 / 0';
+      document.getElementById('deck-mastered-pill').textContent = `Освоено: ${pct}%`;
+      document.getElementById('deck-progress-bar').style.width = `${pct}%`;
+
+      if (total === 0) {
+        stage.innerHTML = `
+          <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 text-center space-y-3 shadow-xs">
+            <div class="text-4xl">🎉</div>
+            <h3 class="text-lg font-extrabold">Карточек по этому фильтру нет</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              ${allCards.length === 0 ? 'Загрузите файл history_base.json, чтобы начать.' : 'Похоже, вы уже изучили всё в этой выборке или фильтр слишком строгий.'}
+            </p>
+            <div class="pt-2 flex flex-wrap justify-center gap-2">
+              <button type="button" onclick="setTypeFilter('all')" class="px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 transition cursor-pointer">
+                Показать все типы
+              </button>
+              <button type="button" onclick="selectTopic('ALL')" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer">
+                Все темы
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (sessionIndex >= total) {
+        sessionIndex = 0;
+      }
+
+      const card = sessionQueue[sessionIndex];
+      const status = progress.statuses[card._key] || 'new';
+      const promptText = prefs.reverseDirection ? card.back : card.front;
+      const answerText = prefs.reverseDirection ? card.front : card.back;
+
+      const typeBadge = card.type === 'date'
+        ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800">📅 Дата</span>'
+        : '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/70 dark:border-sky-800">📌 Факт и имя</span>';
+
+      const statusBadges = {
+        mastered: '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">✓ Знаю</span>',
+        learning: '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300">↻ Повторить</span>',
+        hard: '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300">! Сложная</span>',
+        new: ''
+      };
+
+      // Адаптивный размер шрифта для длинных текстов
+      const promptSizeClass = promptText.length > 90 ? 'text-lg sm:text-xl' : (promptText.length > 40 ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl');
+      const answerSizeClass = answerText.length > 140 ? 'text-base sm:text-lg' : 'text-lg sm:text-xl';
+
+      stage.innerHTML = `
+        <div class="flip-scene">
+          <div id="active-flip-card" class="flip-card ${isCardFlipped ? 'is-flipped' : ''}">
+            <!-- ЛИЦЕВАЯ СТОРОНА -->
+            <div
+              onclick="flipCard()"
+              class="flip-face bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-8 shadow-sm hover:border-brand-300 dark:hover:border-brand-700 transition flex flex-col justify-between cursor-pointer select-none"
+            >
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  ${typeBadge}
+                  ${statusBadges[status]}
+                </div>
+                <span class="text-xs font-medium text-slate-400 truncate max-w-[220px] sm:max-w-xs" title="${escapeHtml(card.topic)}">
+                  ${escapeHtml(card.topic)}
+                </span>
+              </div>
+
+              <div class="my-8 text-center px-1">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  ${prefs.reverseDirection ? 'Назовите дату / термин' : 'Вспомните событие / значение'}
+                </div>
+                <div class="${promptSizeClass} font-extrabold text-slate-900 dark:text-white leading-snug break-words">
+                  ${escapeHtml(promptText)}
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <span>Нажмите на карточку для ответа</span>
+                <span class="font-bold text-brand-600 dark:text-brand-200">Показать ответ →</span>
+              </div>
+            </div>
+
+            <!-- ОБОРОТНАЯ СТОРОНА -->
+            <div
+              onclick="flipCard()"
+              class="flip-back bg-slate-900 dark:bg-slate-800 text-white rounded-3xl border border-slate-800 dark:border-slate-700 p-5 sm:p-8 shadow-md flex flex-col justify-between cursor-pointer select-none"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-200">Ответ</span>
+                <span class="text-xs text-slate-400 truncate max-w-[220px] sm:max-w-xs">${escapeHtml(card.topic)}</span>
+              </div>
+
+              <div class="my-6 text-center px-1 space-y-3">
+                <div class="text-xs font-medium text-slate-400 line-clamp-2">${escapeHtml(promptText)}</div>
+                <div class="${answerSizeClass} font-bold text-white leading-relaxed break-words">
+                  ${escapeHtml(answerText)}
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-800 dark:border-slate-700 text-center text-xs text-slate-400">
+                Оцените, насколько хорошо вы помните карточку, ниже 👇
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Кнопки оценки и навигации -->
+        <div class="mt-4 space-y-3">
+          ${isCardFlipped ? `
+            <div class="grid grid-cols-3 gap-2.5 fade-in">
+              <button
+                type="button"
+                onclick="rateCurrentCard('hard')"
+                class="py-3.5 px-2 rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/70 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-200 font-bold text-xs sm:text-sm transition flex flex-col items-center gap-0.5 cursor-pointer"
+              >
+                <span>Не помню</span>
+                <span class="text-[10px] font-medium opacity-75">скоро вернётся</span>
+              </button>
+
+              <button
+                type="button"
+                onclick="rateCurrentCard('learning')"
+                class="py-3.5 px-2 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900/70 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 font-bold text-xs sm:text-sm transition flex flex-col items-center gap-0.5 cursor-pointer"
+              >
+                <span>Повторить</span>
+                <span class="text-[10px] font-medium opacity-75">на закреплении</span>
+              </button>
+
+              <button
+                type="button"
+                onclick="rateCurrentCard('mastered')"
+                class="py-3.5 px-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/70 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-200 font-bold text-xs sm:text-sm transition flex flex-col items-center gap-0.5 cursor-pointer"
+              >
+                <span>Знаю</span>
+                <span class="text-[10px] font-medium opacity-75">изучено</span>
+              </button>
+            </div>
+          ` : `
+            <button
+              type="button"
+              onclick="flipCard()"
+              class="w-full py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-xs transition cursor-pointer"
+            >
+              Показать ответ
+            </button>
+          `}
+
+          <div class="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onclick="prevCard()"
+              class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 transition cursor-pointer"
+            >
+              ← Предыдущая
+            </button>
+            <button
+              type="button"
+              onclick="nextCard()"
+              class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 transition cursor-pointer"
+            >
+              Следующая →
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function flipCard() {
+      if (sessionQueue.length === 0) return;
+      isCardFlipped = !isCardFlipped;
+      renderCardsMode();
+    }
+
+    function nextCard() {
+      if (sessionQueue.length === 0) return;
+      sessionIndex = (sessionIndex + 1) % sessionQueue.length;
+      isCardFlipped = false;
+      renderCardsMode();
+    }
+
+    function prevCard() {
+      if (sessionQueue.length === 0) return;
+      sessionIndex = (sessionIndex - 1 + sessionQueue.length) % sessionQueue.length;
+      isCardFlipped = false;
+      renderCardsMode();
+    }
+
+    /* Оценка карточки с простым интервальным повторением внутри очереди */
+    function rateCurrentCard(newStatus) {
+      if (sessionQueue.length === 0) return;
+      const card = sessionQueue[sessionIndex];
+
+      progress.statuses[card._key] = newStatus;
+      recordDailyActivity();
+      saveProgress();
+      updateHeaderStats();
+
+      if (newStatus === 'hard') {
+        // Возвращаем сложную карточку в очередь через 3 карточки (или в конец)
+        const insertAt = Math.min(sessionIndex + 4, sessionQueue.length);
+        sessionQueue.splice(insertAt, 0, card);
+      } else if (newStatus === 'learning' && sessionQueue.length > 5) {
+        // Карточку «Повторить» возвращаем чуть дальше — через 8 карточек
+        const insertAt = Math.min(sessionIndex + 9, sessionQueue.length);
+        sessionQueue.splice(insertAt, 0, card);
+      }
+
+      // Если включён фильтр «Только сложные / неизученные» и карточка стала mastered — убираем её из очереди
+      if (prefs.typeFilter === 'unmastered' && newStatus === 'mastered') {
+        sessionQueue.splice(sessionIndex, 1);
+        if (sessionIndex >= sessionQueue.length) sessionIndex = 0;
+      } else {
+        sessionIndex = (sessionIndex + 1) % sessionQueue.length;
+      }
+
+      isCardFlipped = false;
+      renderCardsMode();
+    }
+
+    /* =========================================================================
+       8. РЕЖИМ 2: ТЕСТ С УМНЫМИ ДИСТРАКТОРАМИ
+       ========================================================================= */
+    function setQuizLength(len) {
+      prefs.quizLength = len;
+      savePrefs();
+      startNewQuiz();
+    }
+
+    function updateQuizLengthButtons() {
+      document.querySelectorAll('.qlen-btn').forEach((btn) => {
+        const val = Number(btn.getAttribute('data-qlen'));
+        btn.className = val === prefs.quizLength
+          ? 'qlen-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+          : 'qlen-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+      });
+    }
+
+    function pickSmartDistractors(targetCard, isReverse) {
+      const targetAnswer = normalizeText(isReverse ? targetCard.front : targetCard.back);
+      const chosen = [];
+      const usedAnswers = new Set([targetAnswer]);
+
+      const tryAddFromPool = (pool) => {
+        const shuffled = shuffleArray(pool);
+        for (const c of shuffled) {
+          if (chosen.length >= 3) break;
+          const ansText = isReverse ? c.front : c.back;
+          const norm = normalizeText(ansText);
+          if (!usedAnswers.has(norm) && ansText.trim().length > 0) {
+            usedAnswers.add(norm);
+            chosen.push(ansText);
+          }
+        }
+      };
+
+      // 1. Тот же тип + та же тема
+      tryAddFromPool(allCards.filter((c) => c.type === targetCard.type && c.topic === targetCard.topic));
+      // 2. Тот же тип из всей базы
+      if (chosen.length < 3) {
+        tryAddFromPool(allCards.filter((c) => c.type === targetCard.type));
+      }
+      // 3. Любые карточки из всей базы (на случай очень маленькой базы)
+      if (chosen.length < 3) {
+        tryAddFromPool(allCards);
+      }
+
+      return chosen;
+    }
+
+    function startNewQuiz() {
+      updateQuizLengthButtons();
+      updateDirectionUI();
+
+      const pool = getFilteredCards();
+      const count = Math.min(prefs.quizLength, pool.length);
+      const selectedCards = shuffleArray(pool).slice(0, count);
+      const isRev = prefs.reverseDirection;
+
+      const questions = selectedCards.map((card) => {
+        const prompt = isRev ? card.back : card.front;
+        const correctAnswer = isRev ? card.front : card.back;
+        const distractors = pickSmartDistractors(card, isRev);
+        const options = shuffleArray([
+          { text: correctAnswer, isCorrect: true },
+          ...distractors.map((d) => ({ text: d, isCorrect: false }))
+        ]);
+
+        return {
+          card,
+          prompt,
+          correctAnswer,
+          options,
+          correctIndex: options.findIndex((o) => o.isCorrect)
+        };
+      });
+
+      quizState = {
+        length: count,
+        questions,
+        currentIndex: 0,
+        score: 0,
+        answered: false,
+        selectedIndex: null,
+        mistakes: [],
+        finished: false
+      };
+
+      renderQuizMode();
+    }
+
+    function answerQuiz(optIndex) {
+      if (quizState.answered || quizState.finished) return;
+      const q = quizState.questions[quizState.currentIndex];
+      quizState.answered = true;
+      quizState.selectedIndex = optIndex;
+
+      if (optIndex === q.correctIndex) {
+        quizState.score += 1;
+      } else {
+        quizState.mistakes.push({
+          card: q.card,
+          prompt: q.prompt,
+          correctAnswer: q.correctAnswer,
+          chosenAnswer: q.options[optIndex]?.text || ''
+        });
+      }
+
+      recordDailyActivity();
+      saveProgress();
+      updateHeaderStats();
+      renderQuizMode();
+    }
+
+    function nextQuizQuestion() {
+      if (quizState.currentIndex + 1 >= quizState.questions.length) {
+        quizState.finished = true;
+      } else {
+        quizState.currentIndex += 1;
+        quizState.answered = false;
+        quizState.selectedIndex = null;
+      }
+      renderQuizMode();
+    }
+
+    function markQuizMistakesHard() {
+      quizState.mistakes.forEach((m) => {
+        progress.statuses[m.card._key] = 'hard';
+      });
+      saveProgress();
+      updateHeaderStats();
+      showToast(`Карточек отмечено как «Сложные»: ${quizState.mistakes.length}.`, 'success');
+    }
+
+    function renderQuizMode() {
+      updateQuizLengthButtons();
+      const stage = document.getElementById('quiz-stage');
+
+      if (quizState.questions.length === 0) {
+        stage.innerHTML = `
+          <div class="text-center py-8 space-y-2">
+            <div class="text-3xl">📭</div>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Нет карточек для создания теста по выбранным фильтрам.</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (quizState.finished) {
+        const total = quizState.questions.length;
+        const pct = Math.round((quizState.score / total) * 100);
+        const mistakesHtml = quizState.mistakes.length > 0
+          ? `
+            <div class="text-left space-y-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h4 class="text-sm font-extrabold text-slate-900 dark:text-white">Разбор ошибок (${quizState.mistakes.length})</h4>
+                <button type="button" onclick="markQuizMistakesHard()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 cursor-pointer">
+                  ★ Пометить все ошибки как сложные
+                </button>
+              </div>
+              <div class="space-y-2 max-h-80 overflow-y-auto pr-1">
+                ${quizState.mistakes.map((m) => `
+                  <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700 text-xs sm:text-sm space-y-1">
+                    <div class="text-[11px] text-slate-400">${escapeHtml(m.card.topic)}</div>
+                    <div class="font-bold text-slate-900 dark:text-white">${escapeHtml(m.prompt)}</div>
+                    <div class="text-rose-600 dark:text-rose-400">Ваш ответ: ${escapeHtml(m.chosenAnswer)}</div>
+                    <div class="text-emerald-700 dark:text-emerald-400 font-semibold">Верно: ${escapeHtml(m.correctAnswer)}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `
+          : `<div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-sm font-semibold">Безупречно! Ни одной ошибки!</div>`;
+
+        stage.innerHTML = `
+          <div class="text-center space-y-4 py-2">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-brand-50 dark:bg-brand-600/20 text-brand-600 dark:text-brand-200 text-2xl font-extrabold">
+              ${pct}%
+            </div>
+            <div>
+              <h3 class="text-xl font-extrabold">Результат: ${quizState.score} из ${total}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                ${pct >= 85 ? 'Отличный уровень подготовки к ЕГЭ!' : pct >= 60 ? 'Хороший результат, стоит закрепить ошибки.' : 'Рекомендуем сначала пройти карточки по этой теме.'}
+              </p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2.5">
+              <button type="button" onclick="startNewQuiz()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition cursor-pointer">
+                Пройти ещё раз
+              </button>
+              <button type="button" onclick="switchMode('cards')" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer">
+                К карточкам
+              </button>
+            </div>
+            ${mistakesHtml}
+          </div>
+        `;
+        return;
+      }
+
+      const q = quizState.questions[quizState.currentIndex];
+      const total = quizState.questions.length;
+      const barPct = Math.round(((quizState.currentIndex + (quizState.answered ? 1 : 0)) / total) * 100);
+
+      stage.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between text-xs sm:text-sm font-semibold">
+            <span class="text-slate-500 dark:text-slate-400">Вопрос ${quizState.currentIndex + 1} из ${total}</span>
+            <span class="text-brand-600 dark:text-brand-200 font-bold">Счёт: ${quizState.score}</span>
+          </div>
+
+          <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-brand-600 transition-all duration-300" style="width: ${barPct}%"></div>
+          </div>
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700 space-y-1.5">
+            <div class="text-[11px] font-semibold text-slate-400">${escapeHtml(q.card.topic)}</div>
+            <div class="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white leading-snug">
+              ${escapeHtml(q.prompt)}
+            </div>
+          </div>
+
+          <div class="space-y-2.5">
+            ${q.options.map((opt, idx) => {
+              let cls = 'w-full text-left p-4 rounded-xl border text-sm font-medium transition flex items-start justify-between gap-3 ';
+              if (!quizState.answered) {
+                cls += 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-brand-600/10 cursor-pointer';
+              } else if (idx === q.correctIndex) {
+                cls += 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 text-emerald-950 dark:text-emerald-100 font-semibold';
+              } else if (idx === quizState.selectedIndex) {
+                cls += 'bg-rose-50 dark:bg-rose-950/60 border-rose-500 text-rose-950 dark:text-rose-100';
+              } else {
+                cls += 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400 opacity-65';
+              }
+
+              const icon = quizState.answered
+                ? (idx === q.correctIndex ? '<span class="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>' : (idx === quizState.selectedIndex ? '<span class="text-rose-600 dark:text-rose-400 font-bold shrink-0">✕</span>' : ''))
+                : '';
+
+              return `
+                <button
+                  type="button"
+                  ${quizState.answered ? 'disabled' : `onclick="answerQuiz(${idx})"`}
+                  class="${cls}"
+                >
+                  <span class="leading-snug">${escapeHtml(opt.text)}</span>
+                  ${icon}
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          ${quizState.answered ? `
+            <div class="pt-2 flex justify-end fade-in">
+              <button
+                type="button"
+                onclick="nextQuizQuestion()"
+                class="px-5 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:opacity-90 transition cursor-pointer"
+              >
+                ${quizState.currentIndex + 1 === total ? 'Посмотреть результаты' : 'Следующий вопрос →'}
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    /* =========================================================================
+       9. РЕЖИМ 3: СПРАВОЧНИК И МГНОВЕННЫЙ ПОИСК (С ПАГИНАЦИЕЙ ПО 50)
+       ========================================================================= */
+    function onBrowseSearchInput(val) {
+      browseState.query = val;
+      browseState.limit = 50;
+      renderBrowseMode();
+    }
+
+    function setBrowseStatus(st) {
+      browseState.statusFilter = st;
+      browseState.limit = 50;
+      renderBrowseMode();
+    }
+
+    function loadMoreBrowse() {
+      browseState.limit += 50;
+      renderBrowseMode();
+    }
+
+    function cycleCardStatusInBrowse(cardKey) {
+      const current = progress.statuses[cardKey] || 'new';
+      const order = ['new', 'mastered', 'learning', 'hard'];
+      const next = order[(order.indexOf(current) + 1) % order.length];
+      if (next === 'new') delete progress.statuses[cardKey];
+      else progress.statuses[cardKey] = next;
+      saveProgress();
+      updateHeaderStats();
+      renderBrowseMode();
+    }
+
+    function renderBrowseMode() {
+      document.querySelectorAll('.status-pill').forEach((btn) => {
+        const active = btn.getAttribute('data-status') === browseState.statusFilter;
+        btn.className = active
+          ? 'status-pill px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+          : 'status-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+      });
+
+      const qNorm = normalizeText(browseState.query);
+      const basePool = getFilteredCards();
+
+      const matched = basePool.filter((card) => {
+        const st = progress.statuses[card._key] || 'new';
+        if (browseState.statusFilter !== 'all' && st !== browseState.statusFilter) {
+          return false;
+        }
+        if (qNorm && !card._searchIndex.includes(qNorm)) {
+          return false;
+        }
+        return true;
+      });
+
+      document.getElementById('browse-count').textContent = `Найдено: ${matched.length}`;
+
+      const listEl = document.getElementById('browse-list');
+      const loadMoreWrap = document.getElementById('browse-load-more-wrap');
+
+      if (matched.length === 0) {
+        listEl.innerHTML = `
+          <div class="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+            Ничего не найдено. Попробуйте изменить запрос или снять фильтры.
+          </div>
+        `;
+        loadMoreWrap.classList.add('hidden');
+        return;
+      }
+
+      const slice = matched.slice(0, browseState.limit);
+      const statusMeta = {
+        new: { label: 'Новая', cls: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' },
+        mastered: { label: '✓ Знаю', cls: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300' },
+        learning: { label: '↻ Повторить', cls: 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300' },
+        hard: { label: '! Сложная', cls: 'bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300' }
+      };
+
+      listEl.innerHTML = slice.map((card) => {
+        const st = progress.statuses[card._key] || 'new';
+        const meta = statusMeta[st];
+        return `
+          <div class="p-3.5 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 transition">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 space-y-1">
+                <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400">
+                  <span class="font-semibold">${card.type === 'date' ? '📅 Дата' : '📌 Факт'}</span>
+                  <span>•</span>
+                  <span class="truncate max-w-[260px] sm:max-w-md">${escapeHtml(card.topic)}</span>
+                </div>
+                <div class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white break-words">
+                  ${escapeHtml(card.front)}
+                </div>
+                <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed break-words">
+                  ${escapeHtml(card.back)}
+                </div>
+              </div>
+              <button
+                type="button"
+                onclick="cycleCardStatusInBrowse('${card._key}')"
+                class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold shrink-0 transition cursor-pointer ${meta.cls}"
+                title="Нажмите, чтобы изменить статус карточки"
+              >
+                ${meta.label}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (matched.length > browseState.limit) {
+        loadMoreWrap.classList.remove('hidden');
+        const remaining = matched.length - browseState.limit;
+        loadMoreWrap.querySelector('button').textContent = `Показать ещё ${Math.min(50, remaining)} (осталось ${remaining})`;
+      } else {
+        loadMoreWrap.classList.add('hidden');
+      }
+    }
+
+    /* =========================================================================
+       10. МОДАЛЬНЫЕ ОКНА: ТЕМЫ И НАСТРОЙКИ
+       ========================================================================= */
+    function openTopicsModal() {
+      document.getElementById('topic-search-input').value = '';
+      renderTopicsList('');
+      document.getElementById('topics-modal').classList.remove('hidden');
+    }
+
+    function closeTopicsModal() {
+      document.getElementById('topics-modal').classList.add('hidden');
+    }
+
+    function renderTopicsList(searchStr) {
+      const container = document.getElementById('topics-modal-list');
+      const q = normalizeText(searchStr);
+
+      // Подсчёт по темам
+      const statsMap = new Map();
+      let totalMastered = 0;
+
+      allCards.forEach((c) => {
+        if (!statsMap.has(c.topic)) statsMap.set(c.topic, { total: 0, mastered: 0 });
+        const entry = statsMap.get(c.topic);
+        entry.total++;
+        if (progress.statuses[c._key] === 'mastered') {
+          entry.mastered++;
+          totalMastered++;
+        }
+      });
+
+      const items = [];
+      if (!q || 'все темы'.includes(q)) {
+        items.push({ key: 'ALL', label: 'Все темы', total: allCards.length, mastered: totalMastered });
+      }
+
+      statsMap.forEach((val, topicName) => {
+        if (!q || normalizeText(topicName).includes(q)) {
+          items.push({ key: topicName, label: topicName, total: val.total, mastered: val.mastered });
+        }
+      });
+
+      container.innerHTML = items.map((item) => {
+        const active = prefs.selectedTopic === item.key;
+        const pct = item.total > 0 ? Math.round((item.mastered / item.total) * 100) : 0;
+        return `
+          <button
+            type="button"
+            onclick="selectTopic(${JSON.stringify(item.key).replace(/"/g, '&quot;')})"
+            class="w-full text-left p-3 rounded-xl border transition flex items-center justify-between gap-3 cursor-pointer ${
+              active
+                ? 'bg-brand-50 dark:bg-brand-600/20 border-brand-500 text-brand-900 dark:text-white'
+                : 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }"
+          >
+            <div class="min-w-0">
+              <div class="text-sm font-bold truncate">${escapeHtml(item.label)}</div>
+              <div class="w-32 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mt-1.5">
+                <div class="h-full bg-emerald-500" style="width: ${pct}%"></div>
+              </div>
+            </div>
+            <div class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">
+              ${item.mastered} / ${item.total}
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function openSettingsModal() {
+      let mastered = 0, learning = 0, hard = 0;
+      allCards.forEach((c) => {
+        const st = progress.statuses[c._key];
+        if (st === 'mastered') mastered++;
+        else if (st === 'learning') learning++;
+        else if (st === 'hard') hard++;
+      });
+
+      document.getElementById('stat-mastered').textContent = mastered;
+      document.getElementById('stat-learning').textContent = learning;
+      document.getElementById('stat-hard').textContent = hard;
+
+      document.getElementById('settings-sources-info').innerHTML =
+        allCards.length > 0
+          ? `<strong>Загружено карточек:</strong> ${allCards.length}<br><strong>Источники:</strong> ${loadedSources.map(escapeHtml).join(', ')}`
+          : 'База карточек пока не загружена.';
+
+      hideResetConfirm();
+      document.getElementById('settings-modal').classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+
+    function showResetConfirm() {
+      document.getElementById('reset-initial-wrap').classList.add('hidden');
+      document.getElementById('reset-confirm-wrap').classList.remove('hidden');
+    }
+
+    function hideResetConfirm() {
+      document.getElementById('reset-initial-wrap').classList.remove('hidden');
+      document.getElementById('reset-confirm-wrap').classList.add('hidden');
+    }
+
+    function confirmResetProgress() {
+      progress = { statuses: {}, streak: { lastDate: null, count: 0, todayReviewed: 0 } };
+      saveProgress();
+      updateHeaderStats();
+      rebuildSessionQueue(false);
+      closeSettingsModal();
+      renderActiveMode();
+      showToast('Весь прогресс успешно сброшен.', 'success');
+    }
+
+    function exportProgress() {
+      const blob = new Blob([JSON.stringify(progress, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ege_history_progress_${getTodayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Файл резервной копии прогресса скачан.', 'success');
+    }
+
+    function triggerProgressImport() {
+      const input = document.getElementById('progress-file-input');
+      input.value = '';
+      input.click();
+    }
+
+    document.getElementById('progress-file-input').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const parsed = JSON.parse(await file.text());
+        if (!parsed || typeof parsed.statuses !== 'object') {
+          throw new Error('Неверный формат файла прогресса');
+        }
+        progress = {
+          statuses: { ...progress.statuses, ...parsed.statuses },
+          streak: parsed.streak || progress.streak
+        };
+        saveProgress();
+        updateHeaderStats();
+        openSettingsModal();
+        renderActiveMode();
+        showToast('Прогресс успешно восстановлен!', 'success');
+      } catch (err) {
+        showToast('Не удалось загрузить файл прогресса.', 'error');
+      }
+    });
+
+    /* =========================================================================
+       11. УТИЛИТЫ: TOAST, ESCAPE HTML, ГОРЯЧИЕ КЛАВИШИ
+       ========================================================================= */
+    let toastTimer = null;
+
+    function showToast(msg, type = 'info') {
+      const wrap = document.getElementById('toast-wrap');
+      const box = document.getElementById('toast-box');
+      const styles = {
+        info: 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100',
+        success: 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-100',
+        error: 'bg-rose-50 dark:bg-rose-950 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-100'
+      };
+      box.className = `pointer-events-auto rounded-2xl px-4 py-3 shadow-lg border text-sm font-medium flex items-center justify-between gap-3 fade-in ${styles[type] || styles.info}`;
+      box.innerHTML = `
+        <span>${escapeHtml(msg)}</span>
+        <button type="button" onclick="hideToast()" class="text-xs font-bold opacity-60 hover:opacity-100 cursor-pointer">✕</button>
+      `;
+      wrap.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('toast-wrap').classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /* Горячие клавиши для режима карточек */
+    document.addEventListener('keydown', (e) => {
+      if (prefs.mode !== 'cards') return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (!document.getElementById('topics-modal').classList.contains('hidden')) return;
+      if (!document.getElementById('settings-modal').classList.contains('hidden')) return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flipCard();
+      } else if (e.key === 'ArrowRight') {
+        nextCard();
+      } else if (e.key === 'ArrowLeft') {
+        prevCard();
+      } else if (isCardFlipped && e.key === '1') {
+        rateCurrentCard('hard');
+      } else if (isCardFlipped && e.key === '2') {
+        rateCurrentCard('learning');
+      } else if (isCardFlipped && e.key === '3') {
+        rateCurrentCard('mastered');
+      }
+    });
+
+    /* =========================================================================
+       12. ЗАПУСК ПРИЛОЖЕНИЯ
+       ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTheme();
+      updateControlsUI();
+      switchMode(prefs.mode || 'cards');
+      loadInitialDatabases();
+    });
+  </script>
+</body>
+</html>
