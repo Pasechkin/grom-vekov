@@ -1,3164 +1,772 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ЕГЭ Тренажёр — История и Обществознание</title>
-
-  <!-- Асинхронная загрузка Telegram Mini App SDK (не блокирует отрисовку страницы) -->
-  <script src="https://telegram.org/js/telegram-web-app.js" async onload="initTelegramWebApp()"></script>
-
-  <style>
-    /* =========================================================================
-       1. ДИЗАЙН-ТОКЕНЫ И ТЕМЫ (СВЕТЛАЯ / ТЁМНАЯ) — 100% АВТОНОМНЫЙ CSS
-       ========================================================================= */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Гром веков — Тренажёр ЕГЭ (История и Обществознание)</title>
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --surface-2: #eef2f6;
+    --text: #18202c;
+    --text-muted: #5b6778;
+    --border: #dce3ec;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-soft: #eff6ff;
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --amber: #d97706;
+    --amber-soft: #fef3c7;
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --purple: #7c3aed;
+    --purple-soft: #f3e8ff;
+    --teal: #0d9488;
+    --teal-soft: #ccfbf1;
+    --radius: 16px;
+    --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+  }
+  @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-soft: #f1f5f9;
-      --surface-hover: #e2e8f0;
-      --border: #e2e8f0;
-      --border-strong: #cbd5e1;
-      --text: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #64748b;
-
-      --brand: #3b5bdb;
-      --brand-hover: #364fc7;
-      --brand-soft: #edf2ff;
-      --brand-border: #bac8ff;
-      --brand-text: #2b40a6;
-
-      --card-back-bg: #0f172a;
-      --card-back-border: #1e293b;
-      --card-back-text: #ffffff;
-      --card-back-muted: #94a3b8;
-
-      --emerald-bg: #ecfdf5;
-      --emerald-border: #a7f3d0;
-      --emerald-text: #047857;
-      --emerald-solid: #10b981;
-
-      --amber-bg: #fffbeb;
-      --amber-border: #fde68a;
-      --amber-text: #b45309;
-
-      --rose-bg: #fff1f2;
-      --rose-border: #fecdd3;
-      --rose-text: #be123c;
-      --rose-solid: #e11d48;
-
-      --indigo-bg: #eef2ff;
-      --indigo-border: #c7d2fe;
-      --indigo-text: #4338ca;
-
-      --sky-bg: #f0f9ff;
-      --sky-border: #bae6fd;
-      --sky-text: #0369a1;
-
-      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
-      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
-      --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.16);
-      --header-bg: rgba(255, 255, 255, 0.94);
-      --backdrop: rgba(15, 23, 42, 0.58);
-    }
-
-    html.dark {
       --bg: #0f172a;
       --surface: #1e293b;
-      --surface-soft: #0f172a;
-      --surface-hover: #334155;
-      --border: #334155;
-      --border-strong: #475569;
-      --text: #f8fafc;
-      --text-secondary: #cbd5e1;
+      --surface-2: #273449;
+      --text: #f1f5f9;
       --text-muted: #94a3b8;
-
-      --brand: #4c6ef5;
-      --brand-hover: #5c7cfa;
-      --brand-soft: rgba(76, 110, 245, 0.2);
-      --brand-border: rgba(116, 143, 252, 0.4);
-      --brand-text: #bac8ff;
-
-      --card-back-bg: #020617;
-      --card-back-border: #334155;
-      --card-back-text: #f8fafc;
-      --card-back-muted: #94a3b8;
-
-      --emerald-bg: rgba(16, 185, 129, 0.14);
-      --emerald-border: rgba(16, 185, 129, 0.35);
-      --emerald-text: #6ee7b7;
-      --emerald-solid: #10b981;
-
-      --amber-bg: rgba(245, 158, 11, 0.15);
-      --amber-border: rgba(245, 158, 11, 0.38);
-      --amber-text: #fcd34d;
-
-      --rose-bg: rgba(244, 63, 94, 0.15);
-      --rose-border: rgba(244, 63, 94, 0.38);
-      --rose-text: #fda4af;
-      --rose-solid: #f43f5e;
-
-      --indigo-bg: rgba(99, 102, 241, 0.18);
-      --indigo-border: rgba(129, 140, 248, 0.38);
-      --indigo-text: #c7d2fe;
-
-      --sky-bg: rgba(14, 165, 233, 0.16);
-      --sky-border: rgba(56, 189, 248, 0.38);
-      --sky-text: #7dd3fc;
-
-      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
-      --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.32);
-      --shadow-lg: 0 22px 48px rgba(0, 0, 0, 0.55);
-      --header-bg: rgba(30, 41, 59, 0.94);
-      --backdrop: rgba(2, 6, 23, 0.72);
-    }
-
-    /* =========================================================================
-       2. БАЗОВЫЕ СТИЛИ И ТИПОГРАФИКА
-       ========================================================================= */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, 'Helvetica Neue', Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.45;
-      -webkit-font-smoothing: antialiased;
-      -webkit-tap-highlight-color: transparent;
-      overflow-x: hidden;
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    button, input {
-      font-family: inherit;
-      color: inherit;
-    }
-
-    button {
-      border: none;
-      background: none;
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .truncate {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-
-    .narrow {
-      width: 100%;
-      max-width: 680px;
-      margin: 0 auto;
-    }
-
-    #app {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 84px;
-    }
-
-    @media (min-width: 768px) {
-      #app {
-        padding-bottom: 36px;
-      }
-    }
-
-    /* =========================================================================
-       3. ШАПКА И ПЕРЕКЛЮЧАТЕЛЬ ПРЕДМЕТОВ
-       ========================================================================= */
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: var(--header-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .header-inner {
-      padding: 12px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .brand-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      background: var(--brand);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 0.02em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: var(--shadow-xs);
-    }
-
-    .brand-text {
-      min-width: 0;
-    }
-
-    .brand-title-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-
-    @media (min-width: 640px) {
-      .brand-title {
-        font-size: 18px;
-      }
-    }
-
-    .brand-subtitle {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--brand-text);
-      background: var(--brand-soft);
-      padding: 2px 8px;
-      border-radius: 999px;
-      flex-shrink: 0;
-    }
-
-    .demo-pill {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--amber-bg);
-      color: var(--amber-text);
-      border: 1px solid var(--amber-border);
-      flex-shrink: 0;
-    }
-
-    .header-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 3px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .header-meta strong {
-      color: var(--text-secondary);
-      font-weight: 700;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .btn-upload-header {
-      display: none;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--brand-soft);
-      color: var(--brand-text);
-      transition: opacity 0.15s ease, transform 0.1s ease;
-    }
-
-    .btn-upload-header:hover {
-      opacity: 0.88;
-    }
-
-    @media (min-width: 640px) {
-      .btn-upload-header {
-        display: inline-flex;
-      }
-    }
-
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      transition: background-color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .icon-btn:hover {
-      background: var(--surface-soft);
-      border-color: var(--border-strong);
-    }
-
-    /* Сегментированный переключатель предметов */
-    .subject-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-    }
-
-    .subject-switcher {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      padding: 4px;
-      border-radius: 14px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      width: 100%;
-    }
-
-    @media (min-width: 768px) {
-      .subject-switcher {
-        width: auto;
-        min-width: 340px;
-      }
-    }
-
-    .subject-btn {
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.18s ease;
-    }
-
-    .subject-btn:hover {
-      color: var(--text);
-    }
-
-    .subject-btn.active {
-      background: var(--surface);
-      color: var(--brand);
-      box-shadow: var(--shadow-xs);
-    }
-
-    .subject-count {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 999px;
-      background: var(--surface-soft);
-      color: var(--text-muted);
-    }
-
-    .subject-btn.active .subject-count {
-      background: var(--brand-soft);
-      color: var(--brand-text);
-    }
-
-    /* Навигация режимов на десктопе */
-    .desktop-nav {
-      display: none;
-      align-items: center;
-      gap: 6px;
-    }
-
-    @media (min-width: 768px) {
-      .desktop-nav {
-        display: flex;
-      }
-    }
-
-    .nav-desktop-btn {
-      padding: 9px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      background: var(--surface-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.15s ease;
-    }
-
-    .nav-desktop-btn:hover {
-      background: var(--surface-hover);
-      color: var(--text);
-    }
-
-    .nav-desktop-btn.active {
-      background: var(--brand);
-      color: #ffffff;
-      box-shadow: var(--shadow-xs);
-    }
-
-    /* =========================================================================
-       4. ОСНОВНОЙ КОНТЕНТ И ПАНЕЛЬ ФИЛЬТРОВ
-       ========================================================================= */
-    .main {
-      flex: 1;
-      padding: 18px 0 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: var(--shadow-xs);
-    }
-
-    .controls-top {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    @media (min-width: 640px) {
-      .controls-top {
-        flex-direction: row;
-        align-items: stretch;
-      }
-    }
-
-    .topic-trigger {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      text-align: left;
-      transition: border-color 0.15s ease;
-    }
-
-    .topic-trigger:hover {
-      border-color: var(--brand);
-    }
-
-    .topic-trigger-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-    }
-
-    .topic-trigger-value {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      margin-top: 2px;
-    }
-
-    .topic-trigger-chip {
-      font-size: 12px;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      flex-shrink: 0;
-    }
-
-    .btn-shuffle {
-      padding: 12px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      flex-shrink: 0;
-      transition: all 0.15s ease;
-    }
-
-    .btn-shuffle:hover {
-      background: var(--surface-soft);
-      color: var(--text);
-    }
-
-    .filter-pills {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      scrollbar-width: none;
-    }
-
-    .filter-pills::-webkit-scrollbar {
-      display: none;
-    }
-
-    .pill {
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-      background: var(--surface-soft);
-      color: var(--text-secondary);
-      border: 1px solid transparent;
-      transition: all 0.15s ease;
-    }
-
-    .pill:hover {
-      background: var(--surface-hover);
-      color: var(--text);
-    }
-
-    .pill.active {
-      background: var(--brand);
-      color: #ffffff;
-      box-shadow: var(--shadow-xs);
-    }
-
-    .pill-dark.active {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    /* =========================================================================
-       5. РЕЖИМ 1: КАРТОЧКИ (3D FLIP)
-       ========================================================================= */
-    .cards-toolbar {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    @media (min-width: 640px) {
-      .cards-toolbar {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-    }
-
-    .switch-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      user-select: none;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .switch-input {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .switch-track {
-      width: 38px;
-      height: 22px;
-      border-radius: 999px;
-      background: var(--border-strong);
-      position: relative;
-      flex-shrink: 0;
-      transition: background-color 0.2s ease;
-    }
-
-    .switch-track::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #ffffff;
-      transition: transform 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
-
-    .switch-input:checked + .switch-track {
-      background: var(--brand);
-    }
-
-    .switch-input:checked + .switch-track::after {
-      transform: translateX(16px);
-    }
-
-    .direction-accent {
-      color: var(--brand);
-      font-weight: 700;
-    }
-
-    .deck-stats {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .mastered-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--emerald-bg);
-      color: var(--emerald-text);
-      border: 1px solid var(--emerald-border);
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--border);
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: var(--brand);
-      transition: width 0.3s ease;
-    }
-
-    /* 3D-переворот с автоматической высотой через CSS Grid */
-    .flip-scene {
-      perspective: 1200px;
-      width: 100%;
-    }
-
-    .flip-card {
-      display: grid;
-      width: 100%;
-      min-height: 310px;
-      transform-style: preserve-3d;
-      transition: transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .flip-card.is-flipped {
-      transform: rotateY(180deg);
-    }
-
-    .flip-face,
-    .flip-back {
-      grid-area: 1 / 1;
-      width: 100%;
-      min-height: 310px;
-      border-radius: 24px;
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    @media (min-width: 640px) {
-      .flip-face,
-      .flip-back {
-        padding: 30px;
-      }
-    }
-
-    .flip-face {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .flip-face:hover {
-      border-color: var(--brand-border);
-    }
-
-    .flip-back {
-      background: var(--card-back-bg);
-      border: 1px solid var(--card-back-border);
-      color: var(--card-back-text);
-      box-shadow: var(--shadow-sm);
-      transform: rotateY(180deg);
-    }
-
-    .card-top-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .badge-group {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      border: 1px solid transparent;
-    }
-
-    .badge-date { background: var(--indigo-bg); color: var(--indigo-text); border-color: var(--indigo-border); }
-    .badge-fact { background: var(--sky-bg); color: var(--sky-text); border-color: var(--sky-border); }
-    .badge-task18 { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
-    .badge-term { background: var(--sky-bg); color: var(--sky-text); border-color: var(--sky-border); }
-    .badge-mastered { background: var(--emerald-bg); color: var(--emerald-text); border-color: var(--emerald-border); }
-    .badge-learning { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber-border); }
-    .badge-hard { background: var(--rose-bg); color: var(--rose-text); border-color: var(--rose-border); }
-
-    .card-topic {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      max-width: 240px;
-    }
-
-    .flip-back .card-topic {
-      color: var(--card-back-muted);
-    }
-
-    .card-body {
-      margin: 26px 0;
-      text-align: center;
-      padding: 0 4px;
-    }
-
-    .card-eyebrow {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .card-prompt {
-      font-weight: 800;
-      color: var(--text);
-      line-height: 1.3;
-      word-break: break-word;
-    }
-
-    .card-prompt.size-lg { font-size: 26px; }
-    .card-prompt.size-md { font-size: 21px; }
-    .card-prompt.size-sm { font-size: 17px; }
-
-    @media (min-width: 640px) {
-      .card-prompt.size-lg { font-size: 30px; }
-      .card-prompt.size-md { font-size: 24px; }
-      .card-prompt.size-sm { font-size: 19px; }
-    }
-
-    .card-back-prompt {
-      font-size: 12px;
-      color: var(--card-back-muted);
-      margin-bottom: 12px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .card-answer {
-      font-weight: 700;
-      color: var(--card-back-text);
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    .card-answer.size-md { font-size: 19px; }
-    .card-answer.size-sm { font-size: 16px; }
-
-    .card-footer-hint {
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .flip-back .card-footer-hint {
-      border-top-color: rgba(148, 163, 184, 0.22);
-      color: var(--card-back-muted);
-      justify-content: center;
-    }
-
-    /* Кнопки действий под карточкой */
-    .card-actions {
-      margin-top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .rate-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .rate-btn {
-      padding: 13px 8px;
-      border-radius: 16px;
-      border: 1px solid transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      font-size: 13px;
-      font-weight: 800;
-      transition: transform 0.1s ease, filter 0.15s ease;
-    }
-
-    .rate-btn:active {
-      transform: scale(0.98);
-    }
-
-    .rate-btn small {
-      font-size: 10px;
-      font-weight: 600;
-      opacity: 0.82;
-    }
-
-    .rate-hard { background: var(--rose-bg); border-color: var(--rose-border); color: var(--rose-text); }
-    .rate-learning { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-text); }
-    .rate-mastered { background: var(--emerald-bg); border-color: var(--emerald-border); color: var(--emerald-text); }
-
-    .btn-primary {
-      width: 100%;
-      padding: 14px 18px;
-      border-radius: 16px;
-      background: var(--brand);
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: var(--shadow-xs);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background-color 0.15s ease;
-    }
-
-    .btn-primary:hover {
-      background: var(--brand-hover);
-    }
-
-    .btn-secondary {
-      padding: 11px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background-color 0.15s ease;
-    }
-
-    .btn-secondary:hover {
-      background: var(--surface-soft);
-      color: var(--text);
-    }
-
-    .nav-pair {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .hotkeys-bar {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 12px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    @media (min-width: 768px) {
-      .hotkeys-bar {
-        display: flex;
-      }
-    }
-
-    kbd {
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      margin-right: 4px;
-    }
-
-    /* =========================================================================
-       6. РЕЖИМ 2: ТЕСТ
-       ========================================================================= */
-    .quiz-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: var(--shadow-xs);
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    @media (min-width: 640px) {
-      .quiz-card {
-        padding: 26px;
-      }
-    }
-
-    .quiz-header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    @media (min-width: 640px) {
-      .quiz-header {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-    }
-
-    .quiz-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .qlen-btn {
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--surface-soft);
-      color: var(--text-secondary);
-      transition: all 0.15s ease;
-    }
-
-    .qlen-btn.active {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .quiz-prompt-box {
-      padding: 18px;
-      border-radius: 16px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-    }
-
-    .quiz-prompt-text {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text);
-      margin-top: 6px;
-      line-height: 1.35;
-      word-break: break-word;
-    }
-
-    .quiz-options {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .quiz-opt {
-      width: 100%;
-      text-align: left;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 500;
-      line-height: 1.4;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      transition: all 0.15s ease;
-    }
-
-    .quiz-opt:not(:disabled):hover {
-      border-color: var(--brand);
-      background: var(--brand-soft);
-    }
-
-    .quiz-opt:disabled {
-      cursor: default;
-    }
-
-    .quiz-opt.is-correct {
-      background: var(--emerald-bg);
-      border-color: var(--emerald-solid);
-      color: var(--emerald-text);
-      font-weight: 700;
-    }
-
-    .quiz-opt.is-wrong {
-      background: var(--rose-bg);
-      border-color: var(--rose-solid);
-      color: var(--rose-text);
-      font-weight: 600;
-    }
-
-    .quiz-opt.is-dimmed {
-      opacity: 0.55;
-    }
-
-    .score-circle {
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 12px;
-      border-radius: 26px;
-      background: var(--brand-soft);
-      color: var(--brand);
-      font-size: 24px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .mistake-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 340px;
-      overflow-y: auto;
-      padding-right: 4px;
-      text-align: left;
-    }
-
-    .mistake-item {
-      padding: 13px 15px;
-      border-radius: 14px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      font-size: 13px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    /* =========================================================================
-       7. РЕЖИМ 3: СПРАВОЧНИК
-       ========================================================================= */
-    .search-wrap {
-      position: relative;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 15px;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 12px 14px 12px 40px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .search-input:focus {
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px var(--brand-soft);
-    }
-
-    .browse-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .browse-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .browse-item {
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .browse-front {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text);
-      margin: 4px 0;
-      word-break: break-word;
-    }
-
-    .browse-back {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.48;
-      word-break: break-word;
-    }
-
-    .status-cycle-btn {
-      padding: 6px 10px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      flex-shrink: 0;
-      border: 1px solid transparent;
-    }
-
-    .st-new { background: var(--surface); border-color: var(--border); color: var(--text-muted); }
-    .st-mastered { background: var(--emerald-bg); border-color: var(--emerald-border); color: var(--emerald-text); }
-    .st-learning { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-text); }
-    .st-hard { background: var(--rose-bg); border-color: var(--rose-border); color: var(--rose-text); }
-
-    /* =========================================================================
-       8. НИЖНЯЯ НАВИГАЦИЯ (МОБИЛЬНЫЕ)
-       ========================================================================= */
-    .mobile-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 30;
-      background: var(--header-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-top: 1px solid var(--border);
-      padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px));
-    }
-
-    @media (min-width: 768px) {
-      .mobile-nav {
-        display: none;
-      }
-    }
-
-    .mobile-nav-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .nav-mobile-btn {
-      padding: 7px 6px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .nav-mobile-btn .nav-ico {
-      font-size: 17px;
-      line-height: 1.1;
-    }
-
-    .nav-mobile-btn.active {
-      background: var(--brand-soft);
-      color: var(--brand);
-    }
-
-    /* =========================================================================
-       9. МОДАЛЬНЫЕ ОКНА И TOAST-УВЕДОМЛЕНИЯ
-       ========================================================================= */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      background: var(--backdrop);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 0;
-    }
-
-    @media (min-width: 640px) {
-      .modal-overlay {
-        align-items: center;
-        padding: 16px;
-      }
-    }
-
-    .modal-box {
-      width: 100%;
-      max-width: 480px;
-      max-height: 88vh;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px 24px 0 0;
-      box-shadow: var(--shadow-lg);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      animation: fadeUp 0.2s ease-out;
-    }
-
-    @media (min-width: 640px) {
-      .modal-box {
-        border-radius: 24px;
-      }
-    }
-
-    .modal-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .modal-title {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 800;
-    }
-
-    .modal-close {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--surface-soft);
-      color: var(--text-secondary);
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-body {
-      padding: 18px 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .topic-option {
-      width: 100%;
-      text-align: left;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      transition: all 0.15s ease;
-    }
-
-    .topic-option:hover {
-      background: var(--surface-soft);
-    }
-
-    .topic-option.active {
-      background: var(--brand-soft);
-      border-color: var(--brand);
-    }
-
-    .mini-bar {
-      width: 120px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--border);
-      overflow: hidden;
-      margin-top: 6px;
-    }
-
-    .mini-bar-fill {
-      height: 100%;
-      background: var(--emerald-solid);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      text-align: center;
-    }
-
-    .stat-card {
-      padding: 12px 8px;
-      border-radius: 16px;
-      border: 1px solid transparent;
-    }
-
-    .stat-num {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .stat-lbl {
-      font-size: 11px;
-      font-weight: 700;
-      margin-top: 2px;
-    }
-
-    .toast-wrap {
-      position: fixed;
-      top: 14px;
-      left: 16px;
-      right: 16px;
-      z-index: 60;
-      pointer-events: none;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .toast-box {
-      pointer-events: auto;
-      width: 100%;
-      max-width: 390px;
-      padding: 12px 16px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      box-shadow: var(--shadow-lg);
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      animation: fadeUp 0.2s ease-out;
-    }
-
-    .toast-success { background: var(--emerald-bg); border-color: var(--emerald-border); color: var(--emerald-text); }
-    .toast-error { background: var(--rose-bg); border-color: var(--rose-border); color: var(--rose-text); }
-
-    .empty-state {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 36px 22px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-in {
-      animation: fadeUp 0.2s ease-out both;
-    }
-  </style>
+      --border: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-soft: rgba(59, 130, 246, 0.16);
+      --green: #22c55e;
+      --green-soft: rgba(34, 197, 94, 0.16);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.16);
+      --red: #ef4444;
+      --red-soft: rgba(239, 68, 68, 0.16);
+      --purple: #a78bfa;
+      --purple-soft: rgba(167, 139, 250, 0.16);
+      --teal: #2dd4bf;
+      --teal-soft: rgba(45, 212, 191, 0.16);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 32px;
+  }
+  .app { max-width: 820px; margin: 0 auto; padding: 14px; }
+
+  /* Header */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .brand { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+  .subject-switch {
+    display: inline-flex; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 3px; gap: 3px;
+  }
+  .subject-btn {
+    border: none; background: transparent; color: var(--text-muted); font-family: inherit;
+    font-size: 0.88rem; font-weight: 600; padding: 7px 12px; border-radius: 9px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .subject-btn.active { background: var(--primary); color: #fff; }
+  .icon-btn {
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    width: 38px; height: 38px; border-radius: 11px; cursor: pointer; font-size: 1.05rem;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  /* Stats bar */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 9px 10px; text-align: center;
+  }
+  .stat-val { font-size: 1.15rem; font-weight: 800; }
+  .stat-lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+  .c-green { color: var(--green); }
+  .c-amber { color: var(--amber); }
+  .c-red { color: var(--red); }
+
+  /* Tabs */
+  .tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
+    padding: 4px; margin-bottom: 12px;
+  }
+  .tab-btn {
+    border: none; background: transparent; color: var(--text-muted); font-family: inherit;
+    font-size: 0.9rem; font-weight: 700; padding: 9px 6px; border-radius: 9px; cursor: pointer;
+  }
+  .tab-btn.active { background: var(--primary-soft); color: var(--primary); }
+
+  /* Filters */
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow);
+  }
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  select, input[type="text"] {
+    font-family: inherit; font-size: 0.9rem; color: var(--text); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; outline: none;
+  }
+  select { flex: 1; min-width: 180px; max-width: 100%; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .chip {
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    font-family: inherit; font-size: 0.8rem; font-weight: 600; padding: 6px 10px;
+    border-radius: 999px; cursor: pointer; transition: all 0.15s;
+  }
+  .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* Flashcard */
+  .card-meta {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    margin-bottom: 10px; font-size: 0.82rem; color: var(--text-muted); flex-wrap: wrap;
+  }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .badge {
+    font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+    background: var(--surface-2); color: var(--text-muted);
+  }
+  .badge-art { background: var(--purple-soft); color: var(--purple); }
+  .badge-religion { background: var(--teal-soft); color: var(--teal); }
+  .badge-reforms { background: var(--amber-soft); color: var(--amber); }
+  .badge-task18 { background: var(--amber-soft); color: var(--amber); }
+  .badge-date { background: var(--primary-soft); color: var(--primary); }
+
+  .flashcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 26px 20px; min-height: 230px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; cursor: pointer;
+    box-shadow: var(--shadow); transition: transform 0.12s; position: relative;
+    user-select: none;
+  }
+  .flashcard:active { transform: scale(0.99); }
+  .card-side-label {
+    position: absolute; top: 12px; left: 16px; font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);
+  }
+  .card-topic-small {
+    font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px; margin-top: 10px;
+  }
+  .card-text { font-size: 1.25rem; font-weight: 700; word-break: break-word; }
+  .card-text.back-text { font-size: 1.05rem; font-weight: 500; }
+  .tap-hint { margin-top: 18px; font-size: 0.78rem; color: var(--text-muted); }
+
+  .actions-rate {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px;
+  }
+  .btn {
+    border: none; border-radius: 12px; padding: 12px 10px; font-family: inherit;
+    font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn:active { opacity: 0.85; }
+  .btn-know { background: var(--green-soft); color: var(--green); }
+  .btn-repeat { background: var(--amber-soft); color: var(--amber); }
+  .btn-hard { background: var(--red-soft); color: var(--red); }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-sec { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px;
+  }
+
+  /* Quiz */
+  .quiz-q { font-size: 1.15rem; font-weight: 700; margin: 12px 0 16px; text-align: center; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 9px; }
+  .quiz-opt {
+    text-align: left; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-family: inherit; font-size: 0.92rem;
+    color: var(--text); cursor: pointer; line-height: 1.4;
+  }
+  .quiz-opt.correct { background: var(--green-soft); border-color: var(--green); color: var(--green); font-weight: 700; }
+  .quiz-opt.wrong { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+
+  /* Reference */
+  .search-input { width: 100%; margin-bottom: 10px; }
+  .ref-list { display: flex; flex-direction: column; gap: 8px; }
+  .ref-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px;
+  }
+  .ref-front { font-weight: 700; font-size: 0.96rem; margin-bottom: 4px; }
+  .ref-back { font-size: 0.88rem; color: var(--text-muted); }
+  .ref-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 6px; font-size: 0.74rem; color: var(--text-muted); }
+
+  /* Modal & Upload fallback */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: none;
+    align-items: center; justify-content: center; padding: 16px; z-index: 50;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    padding: 20px; width: 100%; max-width: 440px; box-shadow: var(--shadow);
+  }
+  .modal h3 { margin-bottom: 12px; font-size: 1.1rem; }
+  .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+
+  .empty-box {
+    text-align: center; padding: 32px 16px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+  }
+  .hidden { display: none !important; }
+</style>
 </head>
 <body>
-
-  <!-- Скрытые input для ручной загрузки JSON баз и резервных копий прогресса -->
-  <input id="json-file-input" type="file" accept=".json,application/json" multiple class="hidden" />
-  <input id="progress-file-input" type="file" accept=".json,application/json" class="hidden" />
-
-  <div id="app">
-    <!-- ==================== ШАПКА ==================== -->
-    <header class="header">
-      <div class="container header-inner">
-        <div class="header-top">
-          <div class="brand-group">
-            <div class="brand-badge">ЕГЭ</div>
-            <div class="brand-text">
-              <div class="brand-title-row">
-                <h1 class="brand-title truncate">ЕГЭ Тренажёр</h1>
-                <span class="brand-subtitle">Гром веков</span>
-                <span id="demo-badge" class="demo-pill hidden">Демо</span>
-              </div>
-              <div class="header-meta">
-                <strong id="header-mastery">Изучено: 0 / 0</strong>
-                <span>•</span>
-                <span id="header-streak" title="Дней занятий подряд">🔥 0 дн.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="header-actions">
-            <button type="button" class="btn-upload-header" onclick="triggerJsonUpload()" title="Загрузить .json в текущий предмет">
-              <span>+</span><span>Загрузить .json</span>
-            </button>
-            <button type="button" id="btn-theme" class="icon-btn" onclick="toggleTheme()" title="Переключить тему" aria-label="Переключить тему">
-              🌙
-            </button>
-            <button type="button" class="icon-btn" onclick="openSettingsModal()" title="Настройки и прогресс" aria-label="Настройки">
-              ⚙️
-            </button>
-          </div>
-        </div>
-
-        <!-- Переключатель предметов + десктопная навигация -->
-        <div class="subject-bar">
-          <div class="subject-switcher" role="tablist" aria-label="Выбор предмета">
-            <button type="button" id="subj-btn-history" class="subject-btn" onclick="switchSubject('history')">
-              <span>🏛 История</span>
-              <span id="subj-cnt-history" class="subject-count">0</span>
-            </button>
-            <button type="button" id="subj-btn-social" class="subject-btn" onclick="switchSubject('social')">
-              <span>⚖️ Обществознание</span>
-              <span id="subj-cnt-social" class="subject-count">0</span>
-            </button>
-          </div>
-
-          <nav class="desktop-nav" aria-label="Режимы обучения">
-            <button type="button" data-mode="cards" class="nav-desktop-btn" onclick="switchMode('cards')">🃏 Карточки</button>
-            <button type="button" data-mode="quiz" class="nav-desktop-btn" onclick="switchMode('quiz')">✅ Тест</button>
-            <button type="button" data-mode="browse" class="nav-desktop-btn" onclick="switchMode('browse')">📚 Справочник</button>
-          </nav>
-        </div>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">⚡ Гром веков</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <div class="subject-switch">
+        <button class="subject-btn active" id="subjHistory" onclick="switchSubject('history')">🏛 История</button>
+        <button class="subject-btn" id="subjSocial" onclick="switchSubject('social')">⚖️ Обществознание</button>
       </div>
-    </header>
-
-    <!-- Toast-уведомление -->
-    <div id="toast-wrap" class="toast-wrap hidden">
-      <div id="toast-box" class="toast-box"></div>
+      <button class="icon-btn" title="Настройки и резервная копия" onclick="openSettings()">⚙️</button>
     </div>
-
-    <!-- ==================== ОСНОВНОЙ КОНТЕНТ ==================== -->
-    <main class="container main">
-      <!-- Панель выбора темы и фильтров -->
-      <section class="panel">
-        <div class="controls-top">
-          <button type="button" class="topic-trigger" onclick="openTopicsModal()">
-            <div style="min-width: 0;">
-              <div class="topic-trigger-label">Выбранная тема</div>
-              <div id="selected-topic-label" class="topic-trigger-value truncate">Все темы</div>
-            </div>
-            <span class="topic-trigger-chip">Выбрать ▾</span>
-          </button>
-
-          <button type="button" class="btn-shuffle" onclick="shuffleActiveCards()">
-            <span>🔀</span><span>Перемешать</span>
-          </button>
-        </div>
-
-        <!-- Динамические фильтры под активный предмет -->
-        <div id="filter-pills" class="filter-pills"></div>
-      </section>
-
-      <!-- ==================== РЕЖИМ 1: КАРТОЧКИ ==================== -->
-      <section id="view-cards" class="narrow fade-in">
-        <div class="cards-toolbar">
-          <label class="switch-label">
-            <input id="toggle-reverse-cards" type="checkbox" class="switch-input" onchange="toggleReverseDirection()" />
-            <span class="switch-track"></span>
-            <span>Направление: <span id="direction-label-cards" class="direction-accent">Вопрос → Ответ</span></span>
-          </label>
-
-          <div class="deck-stats">
-            <span id="deck-counter">0 / 0</span>
-            <span id="deck-mastered-pill" class="mastered-pill">Освоено: 0%</span>
-          </div>
-        </div>
-
-        <div class="progress-track">
-          <div id="deck-progress-bar" class="progress-fill" style="width: 0%"></div>
-        </div>
-
-        <div id="cards-stage"></div>
-
-        <div class="hotkeys-bar">
-          <span><kbd>Пробел</kbd>перевернуть</span>
-          <span><kbd>1</kbd>не помню</span>
-          <span><kbd>2</kbd>повторить</span>
-          <span><kbd>3</kbd>знаю</span>
-          <span><kbd>← / →</kbd>листать</span>
-        </div>
-      </section>
-
-      <!-- ==================== РЕЖИМ 2: ТЕСТ ==================== -->
-      <section id="view-quiz" class="narrow hidden fade-in">
-        <div class="quiz-card">
-          <div class="quiz-header">
-            <div class="quiz-row">
-              <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Вопросов:</span>
-              <button type="button" data-qlen="10" class="qlen-btn" onclick="setQuizLength(10)">10</button>
-              <button type="button" data-qlen="20" class="qlen-btn" onclick="setQuizLength(20)">20</button>
-              <button type="button" data-qlen="30" class="qlen-btn" onclick="setQuizLength(30)">30</button>
-            </div>
-
-            <div class="quiz-row">
-              <button type="button" id="btn-reverse-quiz" class="btn-secondary" style="padding: 7px 12px; font-size: 12px;" onclick="toggleReverseDirection()">
-                ⇄ Вопрос → Ответ
-              </button>
-              <button type="button" class="btn-primary" style="width: auto; padding: 8px 14px; font-size: 12px; border-radius: 11px;" onclick="startNewQuiz()">
-                Начать заново
-              </button>
-            </div>
-          </div>
-
-          <div id="quiz-stage"></div>
-        </div>
-      </section>
-
-      <!-- ==================== РЕЖИМ 3: СПРАВОЧНИК ==================== -->
-      <section id="view-browse" class="hidden fade-in">
-        <div class="panel">
-          <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input
-              id="browse-search"
-              type="search"
-              class="search-input"
-              oninput="onBrowseSearchInput(this.value)"
-              placeholder="Поиск по датам, терминам, событиям и темам (ударения не обязательны)..."
-            />
-          </div>
-
-          <div class="browse-toolbar">
-            <div class="quiz-row" id="browse-status-pills">
-              <button type="button" data-status="all" class="pill pill-dark" onclick="setBrowseStatus('all')">Все</button>
-              <button type="button" data-status="new" class="pill pill-dark" onclick="setBrowseStatus('new')">Неизученные</button>
-              <button type="button" data-status="hard" class="pill pill-dark" onclick="setBrowseStatus('hard')">Сложные</button>
-              <button type="button" data-status="learning" class="pill pill-dark" onclick="setBrowseStatus('learning')">Повторить</button>
-              <button type="button" data-status="mastered" class="pill pill-dark" onclick="setBrowseStatus('mastered')">Изученные</button>
-            </div>
-            <div id="browse-count" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Найдено: 0</div>
-          </div>
-
-          <div id="browse-list" class="browse-list"></div>
-
-          <div id="browse-load-more-wrap" class="hidden" style="text-align: center; margin-top: 14px;">
-            <button type="button" class="btn-secondary" onclick="loadMoreBrowse()">Показать ещё 50</button>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- ==================== НИЖНЯЯ НАВИГАЦИЯ (МОБИЛЬНЫЕ) ==================== -->
-    <nav class="mobile-nav" aria-label="Мобильная навигация">
-      <div class="mobile-nav-grid">
-        <button type="button" data-mode="cards" class="nav-mobile-btn" onclick="switchMode('cards')">
-          <span class="nav-ico">🃏</span><span>Карточки</span>
-        </button>
-        <button type="button" data-mode="quiz" class="nav-mobile-btn" onclick="switchMode('quiz')">
-          <span class="nav-ico">✅</span><span>Тест</span>
-        </button>
-        <button type="button" data-mode="browse" class="nav-mobile-btn" onclick="switchMode('browse')">
-          <span class="nav-ico">📚</span><span>Справочник</span>
-        </button>
-      </div>
-    </nav>
   </div>
 
-  <!-- ==================== МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА БАЗЫ (FALLBACK) ==================== -->
-  <div id="fallback-modal" class="modal-overlay hidden">
-    <div class="modal-box" style="max-width: 440px;">
-      <div class="modal-header">
-        <h2 class="modal-title">📂 Загрузите базу карточек</h2>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-val" id="stTotal">0</div><div class="stat-lbl">Всего</div></div>
+    <div class="stat-card"><div class="stat-val c-green" id="stKnow">0</div><div class="stat-lbl">Знаю</div></div>
+    <div class="stat-card"><div class="stat-val c-amber" id="stRepeat">0</div><div class="stat-lbl">Повторить</div></div>
+    <div class="stat-card"><div class="stat-val c-red" id="stHard">0</div><div class="stat-lbl">Сложные</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabCards" onclick="switchMode('cards')">🗂 Карточки</button>
+    <button class="tab-btn" id="tabQuiz" onclick="switchMode('quiz')">🎯 Тест</button>
+    <button class="tab-btn" id="tabRef" onclick="switchMode('ref')">📖 Справочник</button>
+  </div>
+
+  <div class="panel" id="filtersPanel">
+    <div class="filter-row">
+      <select id="topicSelect" onchange="applyFilters()"><option value="all">Все темы</option></select>
+      <select id="statusSelect" style="flex:0 0 auto;min-width:140px;" onchange="applyFilters()">
+        <option value="all">Все статусы</option>
+        <option value="unseen">Новые</option>
+        <option value="repeat">Повторить</option>
+        <option value="hard">Сложные</option>
+        <option value="know">Знаю</option>
+      </select>
+    </div>
+    <div class="chips" id="tagChips"></div>
+  </div>
+
+  <!-- Loading / Fallback -->
+  <div id="loadBox" class="empty-box">
+    <div id="loadMsg" style="font-weight:700;margin-bottom:8px;">Загрузка базы карточек...</div>
+    <div id="manualUpload" class="hidden" style="margin-top:12px;">
+      <p style="font-size:0.86rem;color:var(--text-muted);margin-bottom:12px;">
+        Не удалось автоматически загрузить JSON-файл базы. Выберите файл вручную:
+      </p>
+      <label class="btn btn-primary" style="display:inline-block;">
+        Загрузить базу (.json)
+        <input type="file" accept=".json" style="display:none;" onchange="handleManualJson(event)">
+      </label>
+    </div>
+  </div>
+
+  <!-- Cards View -->
+  <div id="viewCards" class="hidden">
+    <div class="card-meta">
+      <span id="cardCounter">0 / 0</span>
+      <div class="badges" id="cardBadges"></div>
+    </div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <span class="card-side-label" id="cardSideLabel">Вопрос</span>
+      <div class="card-topic-small" id="cardTopic"></div>
+      <div class="card-text" id="cardText"></div>
+      <div class="tap-hint" id="tapHint">Нажмите на карточку, чтобы увидеть ответ</div>
+    </div>
+    <div class="actions-rate">
+      <button class="btn btn-know" onclick="rateCard('know')">✅ Знаю</button>
+      <button class="btn btn-repeat" onclick="rateCard('repeat')">🔁 Повторить</button>
+      <button class="btn btn-hard" onclick="rateCard('hard')">🔥 Сложная</button>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-sec" onclick="prevCard()">← Назад</button>
+      <button class="btn btn-sec" onclick="shuffleDeck()">🔀 Перемешать</button>
+      <button class="btn btn-sec" onclick="nextCard()">Вперёд →</button>
+    </div>
+  </div>
+
+  <!-- Quiz View -->
+  <div id="viewQuiz" class="hidden">
+    <div class="panel">
+      <div class="card-meta">
+        <span id="quizScore">Счёт: 0 / 0</span>
+        <div class="badges" id="quizBadges"></div>
       </div>
-      <div class="modal-body">
-        <p style="margin: 0; font-size: 14px; color: var(--text-secondary); line-height: 1.55;">
-          Файлы <strong>history_base.json</strong> и <strong>social_base.json</strong> не удалось загрузить автоматически (например, страница открыта локально с компьютера). Выберите файл вручную или включите демо-режим.
-        </p>
-
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <button type="button" class="btn-primary" onclick="triggerJsonUpload()">
-            <span>📁</span><span>Загрузить файл базы (.json)</span>
-          </button>
-          <button type="button" class="btn-secondary" style="width: 100%; padding: 12px;" onclick="loadDemoDatabase()">
-            Открыть демо-режим (История + Обществознание)
-          </button>
-        </div>
-
-        <p style="margin: 0; font-size: 12px; color: var(--text-muted); text-align: center;">
-          На GitHub Pages и в Telegram базы подгружаются автоматически.
-        </p>
+      <div class="card-topic-small" id="quizTopic" style="text-align:center;"></div>
+      <div class="quiz-q" id="quizQ"></div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div style="margin-top:14px;text-align:center;">
+        <button class="btn btn-primary hidden" id="quizNextBtn" onclick="nextQuiz()">Следующий вопрос →</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== МОДАЛЬНОЕ ОКНО: ВЫБОР ТЕМЫ ==================== -->
-  <div id="topics-modal" class="modal-overlay hidden" onclick="if (event.target === this) closeTopicsModal()">
-    <div class="modal-box" style="max-width: 520px;">
-      <div class="modal-header">
-        <div>
-          <h2 class="modal-title">Выбор темы</h2>
-          <div id="topics-modal-subtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Прогресс освоения по темам</div>
-        </div>
-        <button type="button" class="modal-close" onclick="closeTopicsModal()" aria-label="Закрыть">✕</button>
-      </div>
-      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border);">
-        <input id="topic-search-input" type="search" class="search-input" style="padding-left: 14px;" oninput="renderTopicsList(this.value)" placeholder="Найти тему..." />
-      </div>
-      <div id="topics-modal-list" class="modal-body" style="gap: 8px;"></div>
-    </div>
+  <!-- Reference View -->
+  <div id="viewRef" class="hidden">
+    <input type="text" id="refSearch" class="search-input" placeholder="Поиск по термину, дате или описанию..." oninput="renderRef()">
+    <div id="refCount" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;"></div>
+    <div class="ref-list" id="refList"></div>
   </div>
 
-  <!-- ==================== МОДАЛЬНОЕ ОКНО: НАСТРОЙКИ ==================== -->
-  <div id="settings-modal" class="modal-overlay hidden" onclick="if (event.target === this) closeSettingsModal()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 class="modal-title">Настройки и прогресс</h2>
-        <button type="button" class="modal-close" onclick="closeSettingsModal()" aria-label="Закрыть">✕</button>
-      </div>
-      <div class="modal-body">
-        <div>
-          <div id="settings-stat-heading" style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px;">
-            Статистика предмета
-          </div>
-          <div class="stats-grid">
-            <div class="stat-card" style="background: var(--emerald-bg); border-color: var(--emerald-border); color: var(--emerald-text);">
-              <div id="stat-mastered" class="stat-num">0</div>
-              <div class="stat-lbl">Знаю</div>
-            </div>
-            <div class="stat-card" style="background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-text);">
-              <div id="stat-learning" class="stat-num">0</div>
-              <div class="stat-lbl">Повторить</div>
-            </div>
-            <div class="stat-card" style="background: var(--rose-bg); border-color: var(--rose-border); color: var(--rose-text);">
-              <div id="stat-hard" class="stat-num">0</div>
-              <div class="stat-lbl">Сложные</div>
-            </div>
-          </div>
-        </div>
+  <!-- Empty filtered -->
+  <div id="emptyFiltered" class="empty-box hidden">
+    <div style="font-weight:700;margin-bottom:6px;">По выбранным фильтрам карточек нет</div>
+    <button class="btn btn-sec" onclick="resetFilters()">Сбросить фильтры</button>
+  </div>
+</div>
 
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
-            Загруженные базы
-          </div>
-          <div id="settings-sources-info" style="font-size: 13px; color: var(--text-secondary); background: var(--surface-soft); padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); line-height: 1.55;"></div>
-          <button type="button" class="btn-secondary" style="width: 100%; background: var(--brand-soft); color: var(--brand-text); border-color: var(--brand-border);" onclick="triggerJsonUpload()">
-            + Добавить файл базы (.json) в текущий предмет
-          </button>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
-            Резервная копия прогресса
-          </div>
-          <div class="nav-pair">
-            <button type="button" class="btn-secondary" onclick="exportProgress()">⬇ Сохранить JSON</button>
-            <button type="button" class="btn-secondary" onclick="triggerProgressImport()">⬆ Загрузить JSON</button>
-          </div>
-        </div>
-
-        <div style="padding-top: 12px; border-top: 1px solid var(--border);">
-          <div id="reset-initial-wrap">
-            <button type="button" class="btn-secondary" style="width: 100%; color: var(--rose-text); border-color: var(--rose-border);" onclick="showResetConfirm()">
-              Сбросить весь прогресс
-            </button>
-          </div>
-          <div id="reset-confirm-wrap" class="hidden" style="padding: 12px; border-radius: 14px; background: var(--rose-bg); border: 1px solid var(--rose-border);">
-            <div style="font-size: 12px; font-weight: 700; color: var(--rose-text); margin-bottom: 10px;">
-              Точно очистить статусы всех карточек (по обоим предметам) и серию дней?
-            </div>
-            <div class="nav-pair">
-              <button type="button" class="btn-primary" style="background: var(--rose-solid); padding: 9px; font-size: 12px; border-radius: 10px;" onclick="confirmResetProgress()">Да, сбросить</button>
-              <button type="button" class="btn-secondary" style="padding: 9px; font-size: 12px; border-radius: 10px;" onclick="hideResetConfirm()">Отмена</button>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- Settings Modal -->
+<div class="modal-bg" id="settingsModal" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <h3>⚙️ Настройки и прогресс</h3>
+    <div class="modal-actions">
+      <button class="btn btn-sec" onclick="exportProgress()">💾 Сохранить прогресс (JSON)</button>
+      <label class="btn btn-sec" style="text-align:center;">
+        📂 Загрузить прогресс (JSON)
+        <input type="file" accept=".json" style="display:none;" onchange="importProgress(event)">
+      </label>
+      <button class="btn btn-hard" onclick="resetSubjectProgress()">🗑 Сбросить прогресс текущего предмета</button>
+      <button class="btn btn-primary" onclick="closeSettings()">Закрыть</button>
     </div>
   </div>
+</div>
 
-  <script>
-    /* =========================================================================
-       1. КОНФИГУРАЦИЯ ПРЕДМЕТОВ И ДЕМО-БАЗЫ
-       ========================================================================= */
-    const SUBJECTS = {
-      history: {
-        id: 'history',
-        title: 'История',
-        icon: '🏛',
-        file: 'history_base.json',
-        filters: [
-          { id: 'all', label: 'Все типы' },
-          { id: 'date', label: 'Только даты' },
-          { id: 'fact', label: 'Факты, имена, термины' },
-          { id: 'unmastered', label: 'Сложные / неизученные' }
-        ],
-        normalizeType: (t) => (t === 'date' ? 'date' : 'fact'),
-        typeBadge: (t) => (t === 'date'
-          ? '<span class="badge badge-date">📅 Дата</span>'
-          : '<span class="badge badge-fact">📌 Факт и имя</span>'),
-        typeShort: (t) => (t === 'date' ? '📅 Дата' : '📌 Факт')
-      },
-      social: {
-        id: 'social',
-        title: 'Обществознание',
-        icon: '⚖️',
-        file: 'social_base.json',
-        filters: [
-          { id: 'all', label: 'Все типы' },
-          { id: 'task18', label: '⭐ Задание №18' },
-          { id: 'term', label: 'Остальные термины' },
-          { id: 'unmastered', label: 'Сложные / неизученные' }
-        ],
-        normalizeType: (t) => (t === 'task18' ? 'task18' : 'term'),
-        typeBadge: (t) => (t === 'task18'
-          ? '<span class="badge badge-task18">⭐ Задание №18</span>'
-          : '<span class="badge badge-term">📖 Термин</span>'),
-        typeShort: (t) => (t === 'task18' ? '⭐ Задание №18' : '📖 Термин')
-      }
-    };
+<script>
+const SUBJECT_CONFIG = {
+  history: {
+    files: ['history_base.json', 'history_extra.json'],
+    storageKey: 'ege_history_trainer_progress_v1',
+    filters: [
+      { id: 'all', label: 'Все' },
+      { id: 'date', label: '📅 Только даты' },
+      { id: 'art', label: '🎨 Искусство' },
+      { id: 'religion', label: '⛪ Религия' },
+      { id: 'reforms', label: '📜 Реформы' }
+    ]
+  },
+  social: {
+    files: ['social_base.json'],
+    storageKey: 'ege_social_trainer_progress_v1',
+    filters: [
+      { id: 'all', label: 'Все термины' },
+      { id: 'task18', label: '⭐ Задание №18' }
+    ]
+  }
+};
 
-    /* Демо-карточки (6 по Истории + 6 по Обществознанию) */
-    const DEMO_DATA = {
-      history: [
-        { id: 1, topic: 'Тема 1. V век – 978 год.', type: 'date', front: '862', back: '«Призвание» Рю́рика. Начало Российской государственности.' },
-        { id: 2, topic: 'Тема 1. V век – 978 год.', type: 'date', front: '945', back: 'Восстание древлян, гибель киевского князя Игоря. Подавление восстания Ольгой.' },
-        { id: 3, topic: 'Тема 2. 978-1132 годы.', type: 'fact', front: 'Яросла́в Му́дрый', back: '1019–1054. Великий князь киевский. Создание Русской Правды, строительство Софии Киевской.' },
-        { id: 4, topic: 'Тема 15. 1801-1825 годы.', type: 'date', front: '14 декабря 1825', back: 'Восстание декабристов на Сенатской площади в Петербурге.' },
-        { id: 5, topic: 'Тема 24. 1929-1941 годы.', type: 'fact', front: 'Гео́ргий Жу́ков', back: 'Крупнейший полководец ВОВ, зам. Верховного Главнокомандующего. Оборона Ленинграда, Московская и Курская битвы, операция «Багратион».' },
-        { id: 6, topic: 'Тема 33. 1985-1991 годы.', type: 'date', front: '26 апреля 1986', back: 'Авария на Чернобыльской АЭС в городе Припять.' }
-      ],
-      social: [
-        { id: 1, topic: '1.1 Природное и общественное в человеке.', type: 'task18', front: 'Личность', back: 'Совокупность социально-значимых качеств индивида, формирующихся в процессе общественной жизни.' },
-        { id: 2, topic: '1.1 Природное и общественное в человеке.', type: 'task18', front: 'Социализация', back: 'Продолжающийся всю жизнь процесс формирования личности, усвоения культурных норм и освоения социальных ролей.' },
-        { id: 3, topic: '1.4 Понятие истины и ее критерии', type: 'term', front: 'Практика (практическая деятельность)', back: 'Реальная деятельность людей, в ходе которой проверяется знание. Главный критерий истины.' },
-        { id: 4, topic: '2.10 Виды, причины и последствия инфляции', type: 'task18', front: 'Инфляция', back: 'Процесс обесценивания денег и снижения их покупательной способности, проявляющийся в росте общего уровня цен.' },
-        { id: 5, topic: '4.2 Государство, его функции', type: 'term', front: 'Федерация', back: 'Государство, состоящее из образований, обладающих определённой политической самостоятельностью.' },
-        { id: 6, topic: '5.16 Особенности уголовного процесса', type: 'task18', front: 'Презумпция невиновности', back: 'Принцип уголовного права, согласно которому гражданин считается невиновным, пока его вина не будет доказана судом.' }
-      ]
-    };
+const ART_RE = /(архитектор|художник|скульптор|композитор|писател|поэт|драматург|иконопис|режисс[её]р|акт[её]р|певец|балет|опер[аыеу]|роман[аеу]?|повест[иь]|поэм[аыеу]|пьес[аыеу]|комеди[яию]|трагеди[яию]|картин[аыеу]|портрет|собор|храм|стил[ьяе]|барокко|классицизм|ампир|модерн|шатров|крестово-купольн|фреск|мозаик|парсун|передвижник|могуч[аеий]+ кучк|театр|кино|фильм|симфони|памятник|дворец|грановит|мавзоле|ансамбл|роспис|литерат|летопис|житие|слово о |сказание о |хождени[ея]|хожени[ея]|домострой|академия художеств|третьяков|консерватори|эрмитаж|авангард|символизм|акмеизм|футуризм|реализм|романтизм|сентиментализм|соцреализм|пролеткульт|самиздат|музык|живопис|зодч|книгопечат|типографи)/i;
+const RELIGION_RE = /(крещени|язычеств|православи|христианств|ислам|буддизм|католич|протестант|униат|церк[овь]|церковн|митрополит|патриарх|епископ|архиепископ|священник|монах|монашеств|монастыр|лавр[аыеу]|игумен|протопоп|свят[оыа][йхя]|канонизир|житие|ерес[иь]|еретик|раскол|старообряд|нестяжател|иосифлян|стяжател|синод|обер-прокурор|духовн[а-я]+ регламент|секуляризац|веротерпимост|свобода совести|антирелигиозн|атеизм|безбожник|волхв|перун|десятин[аыеу]|стоглав|автокефал|икон[аыеу]|библи|евангели|духовенств|храм|собор)/i;
+const REFORMS_RE = /(реформ|контрреформ|судебник|соборное уложение|русская правда|уложение о службе|генеральный регламент|духовный регламент|табель о рангах|жалованн[а-я]+ грамот|конституц|кодекс|декрет|манифест|указ о[б]? |отмен[аыеу] крепостн|отмен[аыеу] местничеств|отмен[аыеу] кормлен|отмен[аыеу] подушн|отмен[аыеу] внутренних|введени[ея]|учреждени[ея] (коллег|министерств|сенат|синод|губерн|земств|дум|патриарш)|избранн[а-я]+ рад|негласн[а-я]+ комитет|сперанск|кисел[её]в|канкрин|витте|столыпин|нэп|коллективизац|индустриализац|совнархоз|косыгин|перестройк|гласност|приватизац|шоков[а-я]+ терапи|монетизац|уроки и погост|погост|юрьев день|заповедн[а-я]+ лет|урочн[а-я]+ лет|земск[а-я]+ (реформ|самоуправлен)|судебн[а-я]+ реформ|военн[а-я]+ реформ|денежн[а-я]+ реформ|налогов[а-я]+ реформ|губернск[а-я]+ реформ|городск[а-я]+ реформ|школьн[а-я]+ реформ|университетск[а-я]+ устав|губн[а-я]+ реформ|приказн[а-я]+ систем|подушн[а-я]+ подат|подворн[а-я]+ |посошн[а-я]+ |рекрутск|всеобщ[а-я]+ воинск|вольных хлебопашц|обязанных крестьян|выкупн[а-я]+ (платеж|операц))/i;
+const DATE_RE = /(^\d{3,4}\b|\b\d{3,4}\s*[–—-]\s*\d{2,4}\b|\b(январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр)[а-я]*\s+\d{3,4}|\b[XVI]+\s*в)/i;
 
-    /* =========================================================================
-       2. ИНИЦИАЛИЗАЦИЯ TELEGRAM MINI APP (АСИНХРОННАЯ И БЕЗОПАСНАЯ)
-       ========================================================================= */
-    function initTelegramWebApp() {
-      try {
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
-          window.Telegram.WebApp.expand();
-        }
-      } catch (e) {
-        console.warn('Telegram WebApp SDK недоступен:', e);
-      }
-    }
+let currentSubject = 'history';
+let currentMode = 'cards';
+let activeTag = 'all';
+let cache = { history: null, social: null };
+let allCards = [];
+let filteredCards = [];
+let deckIndex = 0;
+let isFlipped = false;
+let quizRight = 0, quizTotal = 0, quizLocked = false, currentQuizCard = null;
 
-    /* =========================================================================
-       3. СОСТОЯНИЕ И ОБРАТНО СОВМЕСТИМОЕ ХРАНЕНИЕ ПРОГРЕССА
-       ========================================================================= */
-    const STORAGE_PROGRESS_KEY = 'ege_history_trainer_progress_v1';
-    const STORAGE_PREFS_KEY = 'ege_history_trainer_prefs_v1';
+function getProgress(subj = currentSubject) {
+  try {
+    return JSON.parse(localStorage.getItem(SUBJECT_CONFIG[subj].storageKey) || '{}');
+  } catch { return {}; }
+}
+function saveProgress(prog, subj = currentSubject) {
+  localStorage.setItem(SUBJECT_CONFIG[subj].storageKey, JSON.stringify(prog));
+}
 
-    const subjectData = {
-      history: { cards: [], sources: [], isDemo: false },
-      social: { cards: [], sources: [], isDemo: false }
-    };
+function enrichCard(card, subj) {
+  const c = Object.assign({}, card);
+  if (subj === 'history') {
+    const tags = Array.isArray(c.tags) ? [...c.tags] : [];
+    const txt = (c.front || '') + ' ' + (c.back || '');
+    if (!tags.includes('art') && ART_RE.test(txt)) tags.push('art');
+    if (!tags.includes('religion') && RELIGION_RE.test(txt)) tags.push('religion');
+    if (!tags.includes('reforms') && REFORMS_RE.test(txt)) tags.push('reforms');
+    c.tags = tags;
+    c.isDate = c.type === 'date' || DATE_RE.test(c.front || '');
+  } else {
+    c.tags = c.type === 'task18' ? ['task18'] : [];
+    c.isDate = false;
+  }
+  return c;
+}
 
-    let progress = loadProgress();
-    let prefs = loadPrefs();
+async function loadSubject(subj) {
+  currentSubject = subj;
+  activeTag = 'all';
+  document.getElementById('subjHistory').classList.toggle('active', subj === 'history');
+  document.getElementById('subjSocial').classList.toggle('active', subj === 'social');
+  renderTagChips();
 
-    let sessionQueue = [];
-    let sessionIndex = 0;
-    let isCardFlipped = false;
-    let renderedTopicsCache = [];
+  if (cache[subj]) {
+    allCards = cache[subj];
+    afterLoad();
+    return;
+  }
 
-    let quizState = {
-      length: 10,
-      questions: [],
-      currentIndex: 0,
-      score: 0,
-      answered: false,
-      selectedIndex: null,
-      mistakes: [],
-      finished: false
-    };
-
-    let browseState = {
-      query: '',
-      statusFilter: 'all',
-      limit: 50
-    };
-
-    /* Точная нормализация и djb2-хеш для 100% сохранения старого прогресса по Истории */
-    function normalizeText(str) {
-      return String(str || '')
-        .replace(/\u0301/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .toLowerCase();
-    }
-
-    function hashString(str) {
-      let h = 5381;
-      for (let i = 0; i < str.length; i++) {
-        h = ((h << 5) + h) + str.charCodeAt(i);
-        h = h & h;
-      }
-      return (h >>> 0).toString(36);
-    }
-
-    function getCardKey(card) {
-      const base = normalizeText(card.topic) + '||' + normalizeText(card.front);
-      return 'c_' + hashString(base);
-    }
-
-    function getTodayISO() {
-      const d = new Date();
-      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    }
-
-    function loadProgress() {
-      try {
-        const raw = localStorage.getItem(STORAGE_PROGRESS_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          return {
-            statuses: parsed.statuses && typeof parsed.statuses === 'object' ? parsed.statuses : {},
-            streak: parsed.streak || { lastDate: null, count: 0, todayReviewed: 0 }
-          };
-        }
-      } catch (e) {
-        console.error('Ошибка чтения прогресса:', e);
-      }
-      return { statuses: {}, streak: { lastDate: null, count: 0, todayReviewed: 0 } };
-    }
-
-    function saveProgress() {
-      try {
-        localStorage.setItem(STORAGE_PROGRESS_KEY, JSON.stringify(progress));
-      } catch (e) {
-        console.error('Ошибка сохранения прогресса:', e);
-      }
-    }
-
-    function loadPrefs() {
-      const defaults = {
-        subject: 'history',
-        mode: 'cards',
-        selectedTopicBySubject: { history: 'ALL', social: 'ALL' },
-        typeFilterBySubject: { history: 'all', social: 'all' },
-        reverseDirection: false,
-        theme: 'light',
-        quizLength: 10
-      };
-      try {
-        const raw = localStorage.getItem(STORAGE_PREFS_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          const merged = { ...defaults, ...parsed };
-          // Миграция настроек из старой однопредметной версии
-          if (!merged.selectedTopicBySubject || typeof merged.selectedTopicBySubject !== 'object') {
-            merged.selectedTopicBySubject = { history: parsed.selectedTopic || 'ALL', social: 'ALL' };
-          }
-          if (!merged.typeFilterBySubject || typeof merged.typeFilterBySubject !== 'object') {
-            merged.typeFilterBySubject = { history: parsed.typeFilter || 'all', social: 'all' };
-          }
-          if (!SUBJECTS[merged.subject]) merged.subject = 'history';
-          return merged;
-        }
-      } catch (e) {}
-      return defaults;
-    }
-
-    function savePrefs() {
-      try {
-        localStorage.setItem(STORAGE_PREFS_KEY, JSON.stringify(prefs));
-      } catch (e) {}
-    }
-
-    function getActiveSubject() {
-      return SUBJECTS[prefs.subject] || SUBJECTS.history;
-    }
-
-    function getActiveCards() {
-      return subjectData[prefs.subject].cards;
-    }
-
-    function getSelectedTopic() {
-      return prefs.selectedTopicBySubject[prefs.subject] || 'ALL';
-    }
-
-    function setSelectedTopicValue(val) {
-      prefs.selectedTopicBySubject[prefs.subject] = val;
-      savePrefs();
-    }
-
-    function getTypeFilter() {
-      return prefs.typeFilterBySubject[prefs.subject] || 'all';
-    }
-
-    function setTypeFilterValue(val) {
-      prefs.typeFilterBySubject[prefs.subject] = val;
-      savePrefs();
-    }
-
-    function recordDailyActivity() {
-      const today = getTodayISO();
-      const s = progress.streak || { lastDate: null, count: 0, todayReviewed: 0 };
-
-      if (s.lastDate === today) {
-        s.todayReviewed = (s.todayReviewed || 0) + 1;
-      } else {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yISO = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
-        s.count = s.lastDate === yISO ? (s.count || 0) + 1 : 1;
-        s.lastDate = today;
-        s.todayReviewed = 1;
-      }
-      progress.streak = s;
-    }
-
-    /* =========================================================================
-       4. ЗАГРУЗКА ДВУХ БАЗ ПАРАЛЛЕЛЬНО (Promise.allSettled) И FALLBACK
-       ========================================================================= */
-    function ingestCardsForSubject(subjectId, rawArray, sourceName, replaceExisting = false) {
-      if (!Array.isArray(rawArray) || !SUBJECTS[subjectId]) return 0;
-
-      const store = subjectData[subjectId];
-      const cfg = SUBJECTS[subjectId];
-
-      if (replaceExisting) {
-        store.cards = [];
-        store.sources = [];
-      }
-
-      const existingKeys = new Set(store.cards.map((c) => c._key));
-      let addedCount = 0;
-
-      rawArray.forEach((item, idx) => {
-        if (!item || (!item.front && !item.back)) return;
-        const card = {
-          id: item.id !== undefined ? item.id : store.cards.length + idx + 1,
-          topic: String(item.topic || 'Без темы').trim(),
-          type: cfg.normalizeType(item.type),
-          front: String(item.front || '').trim(),
-          back: String(item.back || '').trim(),
-          _source: sourceName
-        };
-        card._key = getCardKey(card);
-        card._searchIndex = normalizeText(card.front + ' ' + card.back + ' ' + card.topic);
-
-        if (!existingKeys.has(card._key)) {
-          existingKeys.add(card._key);
-          store.cards.push(card);
-          addedCount++;
-        }
-      });
-
-      if (addedCount > 0 && !store.sources.includes(sourceName)) {
-        store.sources.push(sourceName);
-      }
-      return addedCount;
-    }
-
-    async function loadInitialDatabases() {
-      const subjectIds = ['history', 'social'];
-      const results = await Promise.allSettled(
-        subjectIds.map(async (id) => {
-          const file = SUBJECTS[id].file;
-          const res = await fetch(file, { cache: 'no-cache' });
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const data = await res.json();
-          const added = ingestCardsForSubject(id, data, file, true);
-          subjectData[id].isDemo = false;
-          return { id, added };
-        })
-      );
-
-      let totalLoaded = 0;
-      results.forEach((r) => {
-        if (r.status === 'fulfilled') {
-          totalLoaded += r.value.added;
-        }
-      });
-
-      if (totalLoaded > 0) {
-        // Если текущий выбранный предмет пуст, а второй загрузился — переключаемся на загруженный
-        if (subjectData[prefs.subject].cards.length === 0) {
-          const other = prefs.subject === 'history' ? 'social' : 'history';
-          if (subjectData[other].cards.length > 0) {
-            prefs.subject = other;
-            savePrefs();
-          }
-        }
-        document.getElementById('fallback-modal').classList.add('hidden');
-        afterDatabaseUpdated();
-      } else {
-        document.getElementById('fallback-modal').classList.remove('hidden');
-      }
-    }
-
-    function loadDemoDatabase() {
-      ingestCardsForSubject('history', DEMO_DATA.history, 'Демо-набор (История)', true);
-      ingestCardsForSubject('social', DEMO_DATA.social, 'Демо-набор (Обществознание)', true);
-      subjectData.history.isDemo = true;
-      subjectData.social.isDemo = true;
-
-      document.getElementById('fallback-modal').classList.add('hidden');
-      afterDatabaseUpdated();
-      showToast('Открыт демо-режим (по 6 карточек в каждом предмете).', 'info');
-    }
-
-    function triggerJsonUpload() {
-      const input = document.getElementById('json-file-input');
-      input.value = '';
-      input.click();
-    }
-
-    document.getElementById('json-file-input').addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files || []);
-      if (files.length === 0) return;
-
-      const activeId = prefs.subject;
-      const shouldReplaceDemo = subjectData[activeId].isDemo;
-      let totalAdded = 0;
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        try {
-          const parsed = JSON.parse(await file.text());
-          if (!Array.isArray(parsed)) {
-            showToast(`Файл "${file.name}" должен содержать JSON-массив карточек.`, 'error');
-            continue;
-          }
-          totalAdded += ingestCardsForSubject(activeId, parsed, file.name, shouldReplaceDemo && i === 0);
-        } catch (err) {
-          console.error(err);
-          showToast(`Ошибка чтения JSON в файле "${file.name}".`, 'error');
+  showLoading('Загрузка базы карточек...');
+  const files = SUBJECT_CONFIG[subj].files;
+  const loaded = [];
+  for (let i = 0; i < files.length; i++) {
+    try {
+      const res = await fetch(files[i] + '?v=' + Date.now());
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          data.forEach(item => loaded.push(enrichCard(item, subj)));
         }
       }
+    } catch (e) {
+      // Optional secondary files are skipped silently
+    }
+  }
 
-      if (totalAdded > 0) {
-        subjectData[activeId].isDemo = false;
-        document.getElementById('fallback-modal').classList.add('hidden');
-        closeSettingsModal();
-        afterDatabaseUpdated();
-        showToast(`В раздел «${getActiveSubject().title}» добавлено карточек: ${totalAdded}.`, 'success');
-      } else {
-        showToast('Новых уникальных карточек не найдено.', 'info');
-      }
+  if (loaded.length === 0) {
+    document.getElementById('loadMsg').textContent = 'Загрузите базу карточек';
+    document.getElementById('manualUpload').classList.remove('hidden');
+    return;
+  }
+
+  cache[subj] = loaded;
+  allCards = loaded;
+  afterLoad();
+}
+
+function showLoading(msg) {
+  document.getElementById('loadBox').classList.remove('hidden');
+  document.getElementById('loadMsg').textContent = msg;
+  document.getElementById('manualUpload').classList.add('hidden');
+  document.getElementById('viewCards').classList.add('hidden');
+  document.getElementById('viewQuiz').classList.add('hidden');
+  document.getElementById('viewRef').classList.add('hidden');
+  document.getElementById('emptyFiltered').classList.add('hidden');
+}
+
+function afterLoad() {
+  document.getElementById('loadBox').classList.add('hidden');
+  populateTopics();
+  updateStats();
+  applyFilters();
+}
+
+function handleManualJson(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data)) throw new Error();
+      const enriched = data.map(item => enrichCard(item, currentSubject));
+      cache[currentSubject] = enriched;
+      allCards = enriched;
+      afterLoad();
+    } catch {
+      alert('Не удалось прочитать JSON-файл. Проверьте формат.');
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function populateTopics() {
+  const sel = document.getElementById('topicSelect');
+  const counts = {};
+  const order = [];
+  allCards.forEach(c => {
+    const t = c.topic || 'Без темы';
+    if (!counts[t]) order.push(t);
+    counts[t] = (counts[t] || 0) + 1;
+  });
+  sel.innerHTML = `<option value="all">Все темы (${allCards.length})</option>` +
+    order.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)} (${counts[t]})</option>`).join('');
+  document.getElementById('statusSelect').value = 'all';
+}
+
+function renderTagChips() {
+  const box = document.getElementById('tagChips');
+  const list = SUBJECT_CONFIG[currentSubject].filters;
+  box.innerHTML = list.map(f =>
+    `<button class="chip ${activeTag === f.id ? 'active' : ''}" onclick="setTag('${f.id}')">${f.label}</button>`
+  ).join('');
+}
+
+function setTag(tag) {
+  activeTag = tag;
+  renderTagChips();
+  applyFilters();
+}
+
+function resetFilters() {
+  document.getElementById('topicSelect').value = 'all';
+  document.getElementById('statusSelect').value = 'all';
+  activeTag = 'all';
+  renderTagChips();
+  applyFilters();
+}
+
+function applyFilters() {
+  const topic = document.getElementById('topicSelect').value;
+  const status = document.getElementById('statusSelect').value;
+  const prog = getProgress();
+
+  filteredCards = allCards.filter(c => {
+    if (topic !== 'all' && (c.topic || 'Без темы') !== topic) return false;
+    const st = prog[c.id] || 'unseen';
+    if (status !== 'all' && st !== status) return false;
+    if (activeTag === 'date' && !c.isDate) return false;
+    if (activeTag !== 'all' && activeTag !== 'date' && !(c.tags || []).includes(activeTag)) return false;
+    return true;
+  });
+
+  deckIndex = 0;
+  isFlipped = false;
+  quizRight = 0; quizTotal = 0;
+  renderCurrentMode();
+}
+
+function updateStats() {
+  const prog = getProgress();
+  let know = 0, repeat = 0, hard = 0;
+  allCards.forEach(c => {
+    const st = prog[c.id];
+    if (st === 'know') know++;
+    else if (st === 'repeat') repeat++;
+    else if (st === 'hard') hard++;
+  });
+  document.getElementById('stTotal').textContent = allCards.length;
+  document.getElementById('stKnow').textContent = know;
+  document.getElementById('stRepeat').textContent = repeat;
+  document.getElementById('stHard').textContent = hard;
+}
+
+function switchSubject(subj) {
+  if (subj === currentSubject && cache[subj]) return;
+  loadSubject(subj);
+}
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabCards').classList.toggle('active', mode === 'cards');
+  document.getElementById('tabQuiz').classList.toggle('active', mode === 'quiz');
+  document.getElementById('tabRef').classList.toggle('active', mode === 'ref');
+  renderCurrentMode();
+}
+
+function renderCurrentMode() {
+  if (!allCards.length) return;
+  document.getElementById('viewCards').classList.add('hidden');
+  document.getElementById('viewQuiz').classList.add('hidden');
+  document.getElementById('viewRef').classList.add('hidden');
+  document.getElementById('emptyFiltered').classList.add('hidden');
+
+  if (filteredCards.length === 0) {
+    document.getElementById('emptyFiltered').classList.remove('hidden');
+    return;
+  }
+  if (currentMode === 'cards') {
+    document.getElementById('viewCards').classList.remove('hidden');
+    renderCard();
+  } else if (currentMode === 'quiz') {
+    document.getElementById('viewQuiz').classList.remove('hidden');
+    nextQuiz();
+  } else {
+    document.getElementById('viewRef').classList.remove('hidden');
+    renderRef();
+  }
+}
+
+function renderBadgesHtml(c) {
+  const out = [];
+  if (c.isDate) out.push('<span class="badge badge-date">📅 Дата</span>');
+  (c.tags || []).forEach(t => {
+    if (t === 'art') out.push('<span class="badge badge-art">🎨 Искусство</span>');
+    if (t === 'religion') out.push('<span class="badge badge-religion">⛪ Религия</span>');
+    if (t === 'reforms') out.push('<span class="badge badge-reforms">📜 Реформы</span>');
+    if (t === 'task18') out.push('<span class="badge badge-task18">⭐ №18</span>');
+  });
+  return out.join('');
+}
+
+function renderCard() {
+  const c = filteredCards[deckIndex];
+  if (!c) return;
+  document.getElementById('cardCounter').textContent = `Карточка ${deckIndex + 1} из ${filteredCards.length}`;
+  document.getElementById('cardBadges').innerHTML = renderBadgesHtml(c);
+  document.getElementById('cardTopic').textContent = c.topic || '';
+  const textEl = document.getElementById('cardText');
+  if (isFlipped) {
+    document.getElementById('cardSideLabel').textContent = 'Ответ';
+    textEl.textContent = c.back || '';
+    textEl.className = 'card-text back-text';
+    document.getElementById('tapHint').textContent = 'Нажмите, чтобы вернуть вопрос';
+  } else {
+    document.getElementById('cardSideLabel').textContent = 'Вопрос';
+    textEl.textContent = c.front || '';
+    textEl.className = 'card-text';
+    document.getElementById('tapHint').textContent = 'Нажмите на карточку, чтобы увидеть ответ';
+  }
+}
+
+function flipCard() { isFlipped = !isFlipped; renderCard(); }
+function nextCard() { deckIndex = (deckIndex + 1) % filteredCards.length; isFlipped = false; renderCard(); }
+function prevCard() { deckIndex = (deckIndex - 1 + filteredCards.length) % filteredCards.length; isFlipped = false; renderCard(); }
+function shuffleDeck() {
+  for (let i = filteredCards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+  }
+  deckIndex = 0; isFlipped = false; renderCard();
+}
+function rateCard(status) {
+  const c = filteredCards[deckIndex];
+  if (!c) return;
+  const prog = getProgress();
+  prog[c.id] = status;
+  saveProgress(prog);
+  updateStats();
+  nextCard();
+}
+
+function nextQuiz() {
+  quizLocked = false;
+  document.getElementById('quizNextBtn').classList.add('hidden');
+  document.getElementById('quizScore').textContent = `Счёт: ${quizRight} / ${quizTotal}`;
+  const card = filteredCards[Math.floor(Math.random() * filteredCards.length)];
+  currentQuizCard = card;
+  document.getElementById('quizBadges').innerHTML = renderBadgesHtml(card);
+  document.getElementById('quizTopic').textContent = card.topic || '';
+  document.getElementById('quizQ').textContent = card.front || '';
+
+  const pool = allCards.filter(x => x.id !== card.id && x.back !== card.back);
+  const distractors = [];
+  const used = new Set([card.back]);
+  while (distractors.length < 3 && pool.length > 0) {
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    if (!used.has(pick.back)) {
+      used.add(pick.back);
+      distractors.push(pick.back);
+    } else {
+      break;
+    }
+  }
+  const opts = [card.back, ...distractors].sort(() => Math.random() - 0.5);
+  const box = document.getElementById('quizOpts');
+  box.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => checkQuiz(btn, opt === card.back);
+    box.appendChild(btn);
+  });
+}
+
+function checkQuiz(btn, isCorrect) {
+  if (quizLocked) return;
+  quizLocked = true;
+  quizTotal++;
+  if (isCorrect) {
+    quizRight++;
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    Array.from(document.getElementById('quizOpts').children).forEach(b => {
+      if (b.textContent === currentQuizCard.back) b.classList.add('correct');
     });
+  }
+  document.getElementById('quizScore').textContent = `Счёт: ${quizRight} / ${quizTotal}`;
+  document.getElementById('quizNextBtn').classList.remove('hidden');
+}
 
-    function afterDatabaseUpdated() {
-      const cards = getActiveCards();
-      const topics = new Set(cards.map((c) => c.topic));
-      if (getSelectedTopic() !== 'ALL' && !topics.has(getSelectedTopic())) {
-        setSelectedTopicValue('ALL');
-      }
-      rebuildSessionQueue(false);
-      updateSubjectUI();
-      updateHeaderStats();
-      updateControlsUI();
-      if (prefs.mode === 'quiz') {
-        startNewQuiz();
+function renderRef() {
+  const q = (document.getElementById('refSearch').value || '').trim().toLowerCase();
+  const list = q ? filteredCards.filter(c =>
+    (c.front || '').toLowerCase().includes(q) || (c.back || '').toLowerCase().includes(q)
+  ) : filteredCards;
+  document.getElementById('refCount').textContent = `Найдено: ${list.length} (показаны первые ${Math.min(list.length, 150)})`;
+  document.getElementById('refList').innerHTML = list.slice(0, 150).map(c => `
+    <div class="ref-item">
+      <div class="ref-front">${escapeHtml(c.front || '')}</div>
+      <div class="ref-back">${escapeHtml(c.back || '')}</div>
+      <div class="ref-meta">${renderBadgesHtml(c)} <span>${escapeHtml(c.topic || '')}</span></div>
+    </div>
+  `).join('');
+}
+
+function openSettings() { document.getElementById('settingsModal').classList.add('open'); }
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+
+function exportProgress() {
+  const payload = {
+    version: 2,
+    history: getProgress('history'),
+    social: getProgress('social')
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'grom_vekov_progress.json';
+  a.click();
+}
+
+function importProgress(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (data.version === 2 && (data.history || data.social)) {
+        if (data.history) saveProgress(data.history, 'history');
+        if (data.social) saveProgress(data.social, 'social');
       } else {
-        renderActiveMode();
+        saveProgress(data, currentSubject);
       }
+      updateStats();
+      applyFilters();
+      closeSettings();
+      alert('Прогресс восстановлен!');
+    } catch {
+      alert('Ошибка чтения файла прогресса.');
     }
-
-    /* =========================================================================
-       5. ПЕРЕКЛЮЧЕНИЕ ПРЕДМЕТОВ, ФИЛЬТРАЦИЯ И ТЕМЫ
-       ========================================================================= */
-    function switchSubject(subjectId) {
-      if (!SUBJECTS[subjectId] || prefs.subject === subjectId) return;
-      prefs.subject = subjectId;
-      savePrefs();
-      browseState.limit = 50;
-      rebuildSessionQueue(false);
-      updateSubjectUI();
-      updateHeaderStats();
-      updateControlsUI();
-      if (prefs.mode === 'quiz') {
-        startNewQuiz();
-      } else {
-        renderActiveMode();
-      }
-    }
-
-    function updateSubjectUI() {
-      ['history', 'social'].forEach((id) => {
-        const btn = document.getElementById(`subj-btn-${id}`);
-        const cnt = document.getElementById(`subj-cnt-${id}`);
-        if (btn) btn.classList.toggle('active', prefs.subject === id);
-        if (cnt) cnt.textContent = subjectData[id].cards.length;
-      });
-
-      const isDemo = subjectData[prefs.subject].isDemo;
-      document.getElementById('demo-badge').classList.toggle('hidden', !isDemo);
-    }
-
-    function getFilteredCards() {
-      const cards = getActiveCards();
-      const topic = getSelectedTopic();
-      const filter = getTypeFilter();
-
-      return cards.filter((card) => {
-        if (topic !== 'ALL' && card.topic !== topic) return false;
-        if (filter === 'unmastered') {
-          return progress.statuses[card._key] !== 'mastered';
-        }
-        if (filter !== 'all' && card.type !== filter) return false;
-        return true;
-      });
-    }
-
-    function shuffleArray(arr) {
-      const copy = [...arr];
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      return copy;
-    }
-
-    function rebuildSessionQueue(shouldShuffle = false) {
-      const filtered = getFilteredCards();
-      sessionQueue = shouldShuffle ? shuffleArray(filtered) : [...filtered];
-      sessionIndex = 0;
-      isCardFlipped = false;
-    }
-
-    function shuffleActiveCards() {
-      if (prefs.mode === 'cards') {
-        rebuildSessionQueue(true);
-        renderCardsMode();
-        showToast('Карточки перемешаны!', 'info');
-      } else if (prefs.mode === 'quiz') {
-        startNewQuiz();
-        showToast('Сгенерирован новый перемешанный тест!', 'info');
-      } else {
-        subjectData[prefs.subject].cards = shuffleArray(getActiveCards());
-        renderBrowseMode();
-        showToast('Справочник перемешан!', 'info');
-      }
-    }
-
-    function setTypeFilter(filterId) {
-      setTypeFilterValue(filterId);
-      updateControlsUI();
-      rebuildSessionQueue(false);
-      if (prefs.mode === 'quiz') {
-        startNewQuiz();
-      } else {
-        renderActiveMode();
-      }
-    }
-
-    function selectTopicByIndex(idx) {
-      const item = renderedTopicsCache[idx];
-      if (!item) return;
-      setSelectedTopicValue(item.key);
-      closeTopicsModal();
-      updateControlsUI();
-      rebuildSessionQueue(false);
-      if (prefs.mode === 'quiz') {
-        startNewQuiz();
-      } else {
-        renderActiveMode();
-      }
-    }
-
-    function selectAllTopics() {
-      setSelectedTopicValue('ALL');
-      updateControlsUI();
-      rebuildSessionQueue(false);
-      if (prefs.mode === 'quiz') {
-        startNewQuiz();
-      } else {
-        renderActiveMode();
-      }
-    }
-
-    function toggleReverseDirection() {
-      prefs.reverseDirection = !prefs.reverseDirection;
-      isCardFlipped = false;
-      savePrefs();
-      updateDirectionUI();
-      if (prefs.mode === 'cards') {
-        renderCardsMode();
-      } else if (prefs.mode === 'quiz') {
-        startNewQuiz();
-      }
-    }
-
-    function updateDirectionUI() {
-      const isRev = prefs.reverseDirection;
-      const checkbox = document.getElementById('toggle-reverse-cards');
-      if (checkbox) checkbox.checked = isRev;
-
-      const labelCards = document.getElementById('direction-label-cards');
-      if (labelCards) labelCards.textContent = isRev ? 'Ответ → Вопрос' : 'Вопрос → Ответ';
-
-      const btnQuiz = document.getElementById('btn-reverse-quiz');
-      if (btnQuiz) btnQuiz.textContent = isRev ? '⇄ Ответ → Вопрос' : '⇄ Вопрос → Ответ';
-    }
-
-    function updateControlsUI() {
-      const cards = getActiveCards();
-      const topic = getSelectedTopic();
-      document.getElementById('selected-topic-label').textContent =
-        topic === 'ALL' ? `Все темы (${cards.length})` : topic;
-
-      const cfg = getActiveSubject();
-      const activeFilter = getTypeFilter();
-      const pillsWrap = document.getElementById('filter-pills');
-
-      pillsWrap.innerHTML = cfg.filters.map((f) => `
-        <button
-          type="button"
-          class="pill ${f.id === activeFilter ? 'active' : ''}"
-          onclick="setTypeFilter('${f.id}')"
-        >${escapeHtml(f.label)}</button>
-      `).join('');
-
-      updateDirectionUI();
-    }
-
-    function updateHeaderStats() {
-      const cards = getActiveCards();
-      let mastered = 0;
-      cards.forEach((c) => {
-        if (progress.statuses[c._key] === 'mastered') mastered++;
-      });
-
-      document.getElementById('header-mastery').textContent = `Изучено: ${mastered} / ${cards.length}`;
-      const streakCount = progress.streak?.count || 0;
-      document.getElementById('header-streak').textContent = `🔥 ${streakCount} дн.`;
-    }
-
-    /* =========================================================================
-       6. ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ И ТЕМЫ ОФОРМЛЕНИЯ
-       ========================================================================= */
-    function switchMode(mode) {
-      prefs.mode = mode;
-      savePrefs();
-
-      ['cards', 'quiz', 'browse'].forEach((m) => {
-        document.getElementById(`view-${m}`).classList.toggle('hidden', m !== mode);
-      });
-
-      document.querySelectorAll('.nav-desktop-btn, .nav-mobile-btn').forEach((btn) => {
-        btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
-      });
-
-      renderActiveMode();
-    }
-
-    function renderActiveMode() {
-      if (prefs.mode === 'cards') {
-        renderCardsMode();
-      } else if (prefs.mode === 'quiz') {
-        if (quizState.questions.length === 0) startNewQuiz();
-        else renderQuizMode();
-      } else {
-        renderBrowseMode();
-      }
-    }
-
-    function applyTheme() {
-      const isDark = prefs.theme === 'dark';
-      document.documentElement.classList.toggle('dark', isDark);
-      const btn = document.getElementById('btn-theme');
-      if (btn) btn.textContent = isDark ? '☀️' : '🌙';
-    }
-
-    function toggleTheme() {
-      prefs.theme = prefs.theme === 'dark' ? 'light' : 'dark';
-      savePrefs();
-      applyTheme();
-    }
-
-    /* =========================================================================
-       7. РЕЖИМ 1: КАРТОЧКИ С ИНТЕРВАЛЬНЫМ ПОВТОРЕНИЕМ
-       ========================================================================= */
-    function renderCardsMode() {
-      const stage = document.getElementById('cards-stage');
-      const activeCards = getActiveCards();
-      const total = sessionQueue.length;
-
-      const uniqueInFilter = getFilteredCards();
-      const masteredInFilter = uniqueInFilter.filter((c) => progress.statuses[c._key] === 'mastered').length;
-      const pct = uniqueInFilter.length > 0 ? Math.round((masteredInFilter / uniqueInFilter.length) * 100) : 0;
-
-      document.getElementById('deck-counter').textContent =
-        total > 0 ? `Карточка ${Math.min(sessionIndex + 1, total)} из ${total}` : '0 / 0';
-      document.getElementById('deck-mastered-pill').textContent = `Освоено: ${pct}%`;
-      document.getElementById('deck-progress-bar').style.width = `${pct}%`;
-
-      if (activeCards.length === 0) {
-        const cfg = getActiveSubject();
-        stage.innerHTML = `
-          <div class="empty-state">
-            <div style="font-size: 38px;">${cfg.icon}</div>
-            <h3 style="margin: 0; font-size: 18px; font-weight: 800;">База «${escapeHtml(cfg.title)}» пока не загружена</h3>
-            <p style="margin: 0; font-size: 14px; color: var(--text-muted); max-width: 380px;">
-              Загрузите файл <strong>${escapeHtml(cfg.file)}</strong> в репозиторий на GitHub или выберите его вручную с устройства.
-            </p>
-            <div class="quiz-row" style="justify-content: center; margin-top: 8px;">
-              <button type="button" class="btn-primary" style="width: auto; padding: 11px 18px;" onclick="triggerJsonUpload()">📁 Загрузить .json</button>
-              <button type="button" class="btn-secondary" onclick="loadDemoForActiveSubject()">Демо-карточки</button>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      if (total === 0) {
-        stage.innerHTML = `
-          <div class="empty-state">
-            <div style="font-size: 38px;">🎉</div>
-            <h3 style="margin: 0; font-size: 18px; font-weight: 800;">Карточек по этому фильтру нет</h3>
-            <p style="margin: 0; font-size: 14px; color: var(--text-muted);">
-              Вы уже изучили всё в этой выборке или фильтр слишком строгий.
-            </p>
-            <div class="quiz-row" style="justify-content: center; margin-top: 8px;">
-              <button type="button" class="btn-primary" style="width: auto; padding: 10px 16px;" onclick="setTypeFilter('all')">Все типы</button>
-              <button type="button" class="btn-secondary" onclick="selectAllTopics()">Все темы</button>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      if (sessionIndex >= total) sessionIndex = 0;
-
-      const card = sessionQueue[sessionIndex];
-      const cfg = getActiveSubject();
-      const status = progress.statuses[card._key] || 'new';
-      const promptText = prefs.reverseDirection ? card.back : card.front;
-      const answerText = prefs.reverseDirection ? card.front : card.back;
-
-      const statusBadges = {
-        mastered: '<span class="badge badge-mastered">✓ Знаю</span>',
-        learning: '<span class="badge badge-learning">↻ Повторить</span>',
-        hard: '<span class="badge badge-hard">! Сложная</span>',
-        new: ''
-      };
-
-      const promptSize = promptText.length > 90 ? 'size-sm' : (promptText.length > 40 ? 'size-md' : 'size-lg');
-      const answerSize = answerText.length > 140 ? 'size-sm' : 'size-md';
-
-      stage.innerHTML = `
-        <div class="flip-scene">
-          <div id="active-flip-card" class="flip-card ${isCardFlipped ? 'is-flipped' : ''}">
-            <div class="flip-face" onclick="flipCard()">
-              <div class="card-top-row">
-                <div class="badge-group">
-                  ${cfg.typeBadge(card.type)}
-                  ${statusBadges[status]}
-                </div>
-                <span class="card-topic truncate" title="${escapeHtml(card.topic)}">${escapeHtml(card.topic)}</span>
-              </div>
-
-              <div class="card-body">
-                <div class="card-eyebrow">${prefs.reverseDirection ? 'Назовите термин / дату' : 'Вспомните определение / событие'}</div>
-                <div class="card-prompt ${promptSize}">${escapeHtml(promptText)}</div>
-              </div>
-
-              <div class="card-footer-hint">
-                <span>Нажмите на карточку для ответа</span>
-                <span style="font-weight: 800; color: var(--brand);">Показать ответ →</span>
-              </div>
-            </div>
-
-            <div class="flip-back" onclick="flipCard()">
-              <div class="card-top-row">
-                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #bac8ff;">Ответ</span>
-                <span class="card-topic truncate">${escapeHtml(card.topic)}</span>
-              </div>
-
-              <div class="card-body">
-                <div class="card-back-prompt">${escapeHtml(promptText)}</div>
-                <div class="card-answer ${answerSize}">${escapeHtml(answerText)}</div>
-              </div>
-
-              <div class="card-footer-hint">
-                <span>Оцените, насколько уверенно вы помните карточку 👇</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-actions">
-          ${isCardFlipped ? `
-            <div class="rate-grid fade-in">
-              <button type="button" class="rate-btn rate-hard" onclick="rateCurrentCard('hard')">
-                <span>Не помню</span>
-                <small>скоро вернётся</small>
-              </button>
-              <button type="button" class="rate-btn rate-learning" onclick="rateCurrentCard('learning')">
-                <span>Повторить</span>
-                <small>на закреплении</small>
-              </button>
-              <button type="button" class="rate-btn rate-mastered" onclick="rateCurrentCard('mastered')">
-                <span>Знаю</span>
-                <small>изучено</small>
-              </button>
-            </div>
-          ` : `
-            <button type="button" class="btn-primary" onclick="flipCard()">Показать ответ</button>
-          `}
-
-          <div class="nav-pair">
-            <button type="button" class="btn-secondary" onclick="prevCard()">← Предыдущая</button>
-            <button type="button" class="btn-secondary" onclick="nextCard()">Следующая →</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function loadDemoForActiveSubject() {
-      const id = prefs.subject;
-      ingestCardsForSubject(id, DEMO_DATA[id], `Демо-набор (${SUBJECTS[id].title})`, true);
-      subjectData[id].isDemo = true;
-      afterDatabaseUpdated();
-      showToast(`Загружены демо-карточки по предмету «${SUBJECTS[id].title}».`, 'info');
-    }
-
-    function flipCard() {
-      if (sessionQueue.length === 0) return;
-      isCardFlipped = !isCardFlipped;
-      renderCardsMode();
-    }
-
-    function nextCard() {
-      if (sessionQueue.length === 0) return;
-      sessionIndex = (sessionIndex + 1) % sessionQueue.length;
-      isCardFlipped = false;
-      renderCardsMode();
-    }
-
-    function prevCard() {
-      if (sessionQueue.length === 0) return;
-      sessionIndex = (sessionIndex - 1 + sessionQueue.length) % sessionQueue.length;
-      isCardFlipped = false;
-      renderCardsMode();
-    }
-
-    function rateCurrentCard(newStatus) {
-      if (sessionQueue.length === 0) return;
-      const card = sessionQueue[sessionIndex];
-
-      progress.statuses[card._key] = newStatus;
-      recordDailyActivity();
-      saveProgress();
-      updateHeaderStats();
-
-      if (newStatus === 'hard') {
-        const insertAt = Math.min(sessionIndex + 4, sessionQueue.length);
-        sessionQueue.splice(insertAt, 0, card);
-      } else if (newStatus === 'learning' && sessionQueue.length > 5) {
-        const insertAt = Math.min(sessionIndex + 9, sessionQueue.length);
-        sessionQueue.splice(insertAt, 0, card);
-      }
-
-      if (getTypeFilter() === 'unmastered' && newStatus === 'mastered') {
-        sessionQueue.splice(sessionIndex, 1);
-        if (sessionIndex >= sessionQueue.length) sessionIndex = 0;
-      } else {
-        sessionIndex = (sessionIndex + 1) % sessionQueue.length;
-      }
-
-      isCardFlipped = false;
-      renderCardsMode();
-    }
-
-    /* =========================================================================
-       8. РЕЖИМ 2: ТЕСТ С УМНЫМИ ДИСТРАКТОРАМИ (В ПРЕДЕЛАХ АКТИВНОГО ПРЕДМЕТА)
-       ========================================================================= */
-    function setQuizLength(len) {
-      prefs.quizLength = len;
-      savePrefs();
-      startNewQuiz();
-    }
-
-    function updateQuizLengthButtons() {
-      document.querySelectorAll('.qlen-btn').forEach((btn) => {
-        btn.classList.toggle('active', Number(btn.getAttribute('data-qlen')) === prefs.quizLength);
-      });
-    }
-
-    function pickSmartDistractors(targetCard, isReverse) {
-      const subjectCards = getActiveCards();
-      const targetAnswer = normalizeText(isReverse ? targetCard.front : targetCard.back);
-      const chosen = [];
-      const usedAnswers = new Set([targetAnswer]);
-
-      const tryAddFromPool = (pool) => {
-        const shuffled = shuffleArray(pool);
-        for (const c of shuffled) {
-          if (chosen.length >= 3) break;
-          const ansText = isReverse ? c.front : c.back;
-          const norm = normalizeText(ansText);
-          if (!usedAnswers.has(norm) && ansText.trim().length > 0) {
-            usedAnswers.add(norm);
-            chosen.push(ansText);
-          }
-        }
-      };
-
-      // 1. Тот же тип + та же тема (внутри активного предмета)
-      tryAddFromPool(subjectCards.filter((c) => c.type === targetCard.type && c.topic === targetCard.topic));
-      // 2. Тот же тип из всего активного предмета
-      if (chosen.length < 3) {
-        tryAddFromPool(subjectCards.filter((c) => c.type === targetCard.type));
-      }
-      // 3. Любые карточки активного предмета
-      if (chosen.length < 3) {
-        tryAddFromPool(subjectCards);
-      }
-
-      return chosen;
-    }
-
-    function startNewQuiz() {
-      updateQuizLengthButtons();
-      updateDirectionUI();
-
-      const pool = getFilteredCards();
-      const count = Math.min(prefs.quizLength, pool.length);
-      const selectedCards = shuffleArray(pool).slice(0, count);
-      const isRev = prefs.reverseDirection;
-
-      const questions = selectedCards.map((card) => {
-        const prompt = isRev ? card.back : card.front;
-        const correctAnswer = isRev ? card.front : card.back;
-        const distractors = pickSmartDistractors(card, isRev);
-        const options = shuffleArray([
-          { text: correctAnswer, isCorrect: true },
-          ...distractors.map((d) => ({ text: d, isCorrect: false }))
-        ]);
-
-        return {
-          card,
-          prompt,
-          correctAnswer,
-          options,
-          correctIndex: options.findIndex((o) => o.isCorrect)
-        };
-      });
-
-      quizState = {
-        length: count,
-        questions,
-        currentIndex: 0,
-        score: 0,
-        answered: false,
-        selectedIndex: null,
-        mistakes: [],
-        finished: false
-      };
-
-      renderQuizMode();
-    }
-
-    function answerQuiz(optIndex) {
-      if (quizState.answered || quizState.finished) return;
-      const q = quizState.questions[quizState.currentIndex];
-      quizState.answered = true;
-      quizState.selectedIndex = optIndex;
-
-      if (optIndex === q.correctIndex) {
-        quizState.score += 1;
-      } else {
-        quizState.mistakes.push({
-          card: q.card,
-          prompt: q.prompt,
-          correctAnswer: q.correctAnswer,
-          chosenAnswer: q.options[optIndex]?.text || ''
-        });
-      }
-
-      recordDailyActivity();
-      saveProgress();
-      updateHeaderStats();
-      renderQuizMode();
-    }
-
-    function nextQuizQuestion() {
-      if (quizState.currentIndex + 1 >= quizState.questions.length) {
-        quizState.finished = true;
-      } else {
-        quizState.currentIndex += 1;
-        quizState.answered = false;
-        quizState.selectedIndex = null;
-      }
-      renderQuizMode();
-    }
-
-    function markQuizMistakesHard() {
-      quizState.mistakes.forEach((m) => {
-        progress.statuses[m.card._key] = 'hard';
-      });
-      saveProgress();
-      updateHeaderStats();
-      showToast(`Карточек отмечено как «Сложные»: ${quizState.mistakes.length}.`, 'success');
-    }
-
-    function renderQuizMode() {
-      updateQuizLengthButtons();
-      const stage = document.getElementById('quiz-stage');
-
-      if (quizState.questions.length === 0) {
-        stage.innerHTML = `
-          <div style="text-align: center; padding: 32px 12px; color: var(--text-muted); font-size: 14px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">📭</div>
-            Нет карточек для создания теста по выбранным фильтрам.
-          </div>
-        `;
-        return;
-      }
-
-      if (quizState.finished) {
-        const total = quizState.questions.length;
-        const pct = Math.round((quizState.score / total) * 100);
-        const mistakesHtml = quizState.mistakes.length > 0
-          ? `
-            <div style="padding-top: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;">
-              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;">
-                <h4 style="margin: 0; font-size: 14px; font-weight: 800;">Разбор ошибок (${quizState.mistakes.length})</h4>
-                <button type="button" class="rate-btn rate-hard" style="padding: 7px 12px; border-radius: 10px; font-size: 12px;" onclick="markQuizMistakesHard()">
-                  ★ Пометить все ошибки как сложные
-                </button>
-              </div>
-              <div class="mistake-list">
-                ${quizState.mistakes.map((m) => `
-                  <div class="mistake-item">
-                    <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(m.card.topic)}</div>
-                    <div style="font-weight: 800; color: var(--text);">${escapeHtml(m.prompt)}</div>
-                    <div style="color: var(--rose-text);">Ваш ответ: ${escapeHtml(m.chosenAnswer)}</div>
-                    <div style="color: var(--emerald-text); font-weight: 700;">Верно: ${escapeHtml(m.correctAnswer)}</div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `
-          : `<div style="padding: 14px; border-radius: 14px; background: var(--emerald-bg); border: 1px solid var(--emerald-border); color: var(--emerald-text); font-weight: 700; font-size: 14px;">Безупречно! Ни одной ошибки!</div>`;
-
-        stage.innerHTML = `
-          <div style="text-align: center; display: flex; flex-direction: column; gap: 14px;">
-            <div class="score-circle">${pct}%</div>
-            <div>
-              <h3 style="margin: 0; font-size: 20px; font-weight: 800;">Результат: ${quizState.score} из ${total}</h3>
-              <p style="margin: 6px 0 0; font-size: 14px; color: var(--text-muted);">
-                ${pct >= 85 ? 'Отличный уровень подготовки к ЕГЭ!' : pct >= 60 ? 'Хороший результат, стоит закрепить ошибки.' : 'Рекомендуем сначала пройти карточки по этой теме.'}
-              </p>
-            </div>
-            <div class="quiz-row" style="justify-content: center;">
-              <button type="button" class="btn-primary" style="width: auto; padding: 11px 20px;" onclick="startNewQuiz()">Пройти ещё раз</button>
-              <button type="button" class="btn-secondary" onclick="switchMode('cards')">К карточкам</button>
-            </div>
-            ${mistakesHtml}
-          </div>
-        `;
-        return;
-      }
-
-      const q = quizState.questions[quizState.currentIndex];
-      const total = quizState.questions.length;
-      const barPct = Math.round(((quizState.currentIndex + (quizState.answered ? 1 : 0)) / total) * 100);
-
-      stage.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 14px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700;">
-            <span style="color: var(--text-muted);">Вопрос ${quizState.currentIndex + 1} из ${total}</span>
-            <span style="color: var(--brand);">Счёт: ${quizState.score}</span>
-          </div>
-
-          <div class="progress-track" style="margin-bottom: 0;">
-            <div class="progress-fill" style="width: ${barPct}%"></div>
-          </div>
-
-          <div class="quiz-prompt-box">
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">${escapeHtml(q.card.topic)}</div>
-            <div class="quiz-prompt-text">${escapeHtml(q.prompt)}</div>
-          </div>
-
-          <div class="quiz-options">
-            ${q.options.map((opt, idx) => {
-              let stateCls = '';
-              let icon = '';
-              if (quizState.answered) {
-                if (idx === q.correctIndex) {
-                  stateCls = 'is-correct';
-                  icon = '<span style="font-weight: 800; flex-shrink: 0;">✓</span>';
-                } else if (idx === quizState.selectedIndex) {
-                  stateCls = 'is-wrong';
-                  icon = '<span style="font-weight: 800; flex-shrink: 0;">✕</span>';
-                } else {
-                  stateCls = 'is-dimmed';
-                }
-              }
-              return `
-                <button
-                  type="button"
-                  class="quiz-opt ${stateCls}"
-                  ${quizState.answered ? 'disabled' : `onclick="answerQuiz(${idx})"`}
-                >
-                  <span>${escapeHtml(opt.text)}</span>
-                  ${icon}
-                </button>
-              `;
-            }).join('')}
-          </div>
-
-          ${quizState.answered ? `
-            <div class="fade-in" style="display: flex; justify-content: flex-end; padding-top: 4px;">
-              <button type="button" class="btn-primary" style="width: auto; padding: 11px 20px;" onclick="nextQuizQuestion()">
-                ${quizState.currentIndex + 1 === total ? 'Посмотреть результаты' : 'Следующий вопрос →'}
-              </button>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }
-
-    /* =========================================================================
-       9. РЕЖИМ 3: СПРАВОЧНИК И МГНОВЕННЫЙ ПОИСК (ПАГИНАЦИЯ ПО 50)
-       ========================================================================= */
-    function onBrowseSearchInput(val) {
-      browseState.query = val;
-      browseState.limit = 50;
-      renderBrowseMode();
-    }
-
-    function setBrowseStatus(st) {
-      browseState.statusFilter = st;
-      browseState.limit = 50;
-      renderBrowseMode();
-    }
-
-    function loadMoreBrowse() {
-      browseState.limit += 50;
-      renderBrowseMode();
-    }
-
-    function cycleCardStatusInBrowse(cardKey) {
-      const current = progress.statuses[cardKey] || 'new';
-      const order = ['new', 'mastered', 'learning', 'hard'];
-      const next = order[(order.indexOf(current) + 1) % order.length];
-      if (next === 'new') delete progress.statuses[cardKey];
-      else progress.statuses[cardKey] = next;
-      saveProgress();
-      updateHeaderStats();
-      renderBrowseMode();
-    }
-
-    function renderBrowseMode() {
-      document.querySelectorAll('#browse-status-pills .pill').forEach((btn) => {
-        btn.classList.toggle('active', btn.getAttribute('data-status') === browseState.statusFilter);
-      });
-
-      const qNorm = normalizeText(browseState.query);
-      const basePool = getFilteredCards();
-      const cfg = getActiveSubject();
-
-      const matched = basePool.filter((card) => {
-        const st = progress.statuses[card._key] || 'new';
-        if (browseState.statusFilter !== 'all' && st !== browseState.statusFilter) return false;
-        if (qNorm && !card._searchIndex.includes(qNorm)) return false;
-        return true;
-      });
-
-      document.getElementById('browse-count').textContent = `Найдено: ${matched.length}`;
-
-      const listEl = document.getElementById('browse-list');
-      const loadMoreWrap = document.getElementById('browse-load-more-wrap');
-
-      if (matched.length === 0) {
-        listEl.innerHTML = `
-          <div style="padding: 36px 12px; text-align: center; font-size: 14px; color: var(--text-muted);">
-            Ничего не найдено. Попробуйте изменить запрос или снять фильтры.
-          </div>
-        `;
-        loadMoreWrap.classList.add('hidden');
-        return;
-      }
-
-      const slice = matched.slice(0, browseState.limit);
-      const statusMeta = {
-        new: { label: 'Новая', cls: 'st-new' },
-        mastered: { label: '✓ Знаю', cls: 'st-mastered' },
-        learning: { label: '↻ Повторить', cls: 'st-learning' },
-        hard: { label: '! Сложная', cls: 'st-hard' }
-      };
-
-      listEl.innerHTML = slice.map((card) => {
-        const st = progress.statuses[card._key] || 'new';
-        const meta = statusMeta[st];
-        return `
-          <div class="browse-item">
-            <div style="min-width: 0; flex: 1;">
-              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted);">
-                <span style="font-weight: 700;">${cfg.typeShort(card.type)}</span>
-                <span>•</span>
-                <span class="truncate" style="max-width: 340px;">${escapeHtml(card.topic)}</span>
-              </div>
-              <div class="browse-front">${escapeHtml(card.front)}</div>
-              <div class="browse-back">${escapeHtml(card.back)}</div>
-            </div>
-            <button
-              type="button"
-              class="status-cycle-btn ${meta.cls}"
-              onclick="cycleCardStatusInBrowse('${card._key}')"
-              title="Нажмите, чтобы изменить статус"
-            >${meta.label}</button>
-          </div>
-        `;
-      }).join('');
-
-      if (matched.length > browseState.limit) {
-        loadMoreWrap.classList.remove('hidden');
-        const remaining = matched.length - browseState.limit;
-        loadMoreWrap.querySelector('button').textContent = `Показать ещё ${Math.min(50, remaining)} (осталось ${remaining})`;
-      } else {
-        loadMoreWrap.classList.add('hidden');
-      }
-    }
-
-    /* =========================================================================
-       10. МОДАЛЬНЫЕ ОКНА: ТЕМЫ И НАСТРОЙКИ
-       ========================================================================= */
-    function openTopicsModal() {
-      const cfg = getActiveSubject();
-      document.getElementById('topics-modal-subtitle').textContent = `${cfg.icon} ${cfg.title} — прогресс по темам`;
-      document.getElementById('topic-search-input').value = '';
-      renderTopicsList('');
-      document.getElementById('topics-modal').classList.remove('hidden');
-    }
-
-    function closeTopicsModal() {
-      document.getElementById('topics-modal').classList.add('hidden');
-    }
-
-    function renderTopicsList(searchStr) {
-      const container = document.getElementById('topics-modal-list');
-      const q = normalizeText(searchStr);
-      const cards = getActiveCards();
-      const selected = getSelectedTopic();
-
-      const statsMap = new Map();
-      let totalMastered = 0;
-
-      cards.forEach((c) => {
-        if (!statsMap.has(c.topic)) statsMap.set(c.topic, { total: 0, mastered: 0 });
-        const entry = statsMap.get(c.topic);
-        entry.total++;
-        if (progress.statuses[c._key] === 'mastered') {
-          entry.mastered++;
-          totalMastered++;
-        }
-      });
-
-      const items = [];
-      if (!q || 'все темы'.includes(q)) {
-        items.push({ key: 'ALL', label: 'Все темы', total: cards.length, mastered: totalMastered });
-      }
-
-      statsMap.forEach((val, topicName) => {
-        if (!q || normalizeText(topicName).includes(q)) {
-          items.push({ key: topicName, label: topicName, total: val.total, mastered: val.mastered });
-        }
-      });
-
-      renderedTopicsCache = items;
-
-      container.innerHTML = items.map((item, idx) => {
-        const pct = item.total > 0 ? Math.round((item.mastered / item.total) * 100) : 0;
-        return `
-          <button
-            type="button"
-            class="topic-option ${selected === item.key ? 'active' : ''}"
-            onclick="selectTopicByIndex(${idx})"
-          >
-            <div style="min-width: 0; flex: 1;">
-              <div class="truncate" style="font-size: 14px; font-weight: 700; color: var(--text);">${escapeHtml(item.label)}</div>
-              <div class="mini-bar"><div class="mini-bar-fill" style="width: ${pct}%"></div></div>
-            </div>
-            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); flex-shrink: 0;">
-              ${item.mastered} / ${item.total}
-            </div>
-          </button>
-        `;
-      }).join('');
-    }
-
-    function openSettingsModal() {
-      const cfg = getActiveSubject();
-      const cards = getActiveCards();
-      let mastered = 0, learning = 0, hard = 0;
-
-      cards.forEach((c) => {
-        const st = progress.statuses[c._key];
-        if (st === 'mastered') mastered++;
-        else if (st === 'learning') learning++;
-        else if (st === 'hard') hard++;
-      });
-
-      document.getElementById('settings-stat-heading').textContent = `Статистика: ${cfg.icon} ${cfg.title}`;
-      document.getElementById('stat-mastered').textContent = mastered;
-      document.getElementById('stat-learning').textContent = learning;
-      document.getElementById('stat-hard').textContent = hard;
-
-      const histInfo = subjectData.history.cards.length > 0
-        ? `${subjectData.history.cards.length} карт. (${subjectData.history.sources.map(escapeHtml).join(', ')})`
-        : 'не загружена';
-      const socInfo = subjectData.social.cards.length > 0
-        ? `${subjectData.social.cards.length} карт. (${subjectData.social.sources.map(escapeHtml).join(', ')})`
-        : 'не загружена';
-
-      document.getElementById('settings-sources-info').innerHTML =
-        `<div><strong>🏛 История:</strong> ${histInfo}</div>` +
-        `<div style="margin-top: 4px;"><strong>⚖️ Обществознание:</strong> ${socInfo}</div>`;
-
-      hideResetConfirm();
-      document.getElementById('settings-modal').classList.remove('hidden');
-    }
-
-    function closeSettingsModal() {
-      document.getElementById('settings-modal').classList.add('hidden');
-    }
-
-    function showResetConfirm() {
-      document.getElementById('reset-initial-wrap').classList.add('hidden');
-      document.getElementById('reset-confirm-wrap').classList.remove('hidden');
-    }
-
-    function hideResetConfirm() {
-      document.getElementById('reset-initial-wrap').classList.remove('hidden');
-      document.getElementById('reset-confirm-wrap').classList.add('hidden');
-    }
-
-    function confirmResetProgress() {
-      progress = { statuses: {}, streak: { lastDate: null, count: 0, todayReviewed: 0 } };
-      saveProgress();
-      updateHeaderStats();
-      rebuildSessionQueue(false);
-      closeSettingsModal();
-      renderActiveMode();
-      showToast('Весь прогресс успешно сброшен.', 'success');
-    }
-
-    function exportProgress() {
-      const blob = new Blob([JSON.stringify(progress, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ege_trainer_progress_${getTodayISO()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      showToast('Файл резервной копии прогресса скачан.', 'success');
-    }
-
-    function triggerProgressImport() {
-      const input = document.getElementById('progress-file-input');
-      input.value = '';
-      input.click();
-    }
-
-    document.getElementById('progress-file-input').addEventListener('change', async (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      try {
-        const parsed = JSON.parse(await file.text());
-        if (!parsed || typeof parsed.statuses !== 'object') {
-          throw new Error('Неверный формат файла');
-        }
-        progress = {
-          statuses: { ...progress.statuses, ...parsed.statuses },
-          streak: parsed.streak || progress.streak
-        };
-        saveProgress();
-        updateHeaderStats();
-        openSettingsModal();
-        renderActiveMode();
-        showToast('Прогресс успешно восстановлен!', 'success');
-      } catch (err) {
-        showToast('Не удалось загрузить файл прогресса.', 'error');
-      }
-    });
-
-    /* =========================================================================
-       11. УТИЛИТЫ И ГОРЯЧИЕ КЛАВИШИ
-       ========================================================================= */
-    let toastTimer = null;
-
-    function showToast(msg, type = 'info') {
-      const wrap = document.getElementById('toast-wrap');
-      const box = document.getElementById('toast-box');
-      const cls = type === 'success' ? 'toast-success' : (type === 'error' ? 'toast-error' : '');
-      box.className = `toast-box ${cls}`;
-      box.innerHTML = `
-        <span>${escapeHtml(msg)}</span>
-        <button type="button" onclick="hideToast()" style="font-weight: 800; opacity: 0.7; flex-shrink: 0;">✕</button>
-      `;
-      wrap.classList.remove('hidden');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(hideToast, 4000);
-    }
-
-    function hideToast() {
-      document.getElementById('toast-wrap').classList.add('hidden');
-    }
-
-    function escapeHtml(str) {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (prefs.mode !== 'cards') return;
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-      if (!document.getElementById('topics-modal').classList.contains('hidden')) return;
-      if (!document.getElementById('settings-modal').classList.contains('hidden')) return;
-      if (!document.getElementById('fallback-modal').classList.contains('hidden')) return;
-
-      if (e.code === 'Space') {
-        e.preventDefault();
-        flipCard();
-      } else if (e.key === 'ArrowRight') {
-        nextCard();
-      } else if (e.key === 'ArrowLeft') {
-        prevCard();
-      } else if (isCardFlipped && e.key === '1') {
-        rateCurrentCard('hard');
-      } else if (isCardFlipped && e.key === '2') {
-        rateCurrentCard('learning');
-      } else if (isCardFlipped && e.key === '3') {
-        rateCurrentCard('mastered');
-      }
-    });
-
-    /* =========================================================================
-       12. ЗАПУСК ПРИЛОЖЕНИЯ
-       ========================================================================= */
-    window.addEventListener('DOMContentLoaded', () => {
-      initTelegramWebApp();
-      applyTheme();
-      updateSubjectUI();
-      updateControlsUI();
-      switchMode(prefs.mode || 'cards');
-      loadInitialDatabases();
-    });
-  </script>
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function resetSubjectProgress() {
+  if (!confirm('Сбросить весь прогресс по текущему предмету?')) return;
+  saveProgress({}, currentSubject);
+  updateStats();
+  applyFilters();
+  closeSettings();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+loadSubject('history');
+</script>
 </body>
 </html>
