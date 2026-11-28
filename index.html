@@ -59,7 +59,7 @@
     color: var(--text);
     line-height: 1.5;
     min-height: 100vh;
-    padding-bottom: 32px;
+    padding-bottom: 36px;
   }
   .app { max-width: 820px; margin: 0 auto; padding: 14px; }
 
@@ -81,9 +81,17 @@
   .subject-btn.active { background: var(--primary); color: #fff; }
   .icon-btn {
     border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    width: 38px; height: 38px; border-radius: 11px; cursor: pointer; font-size: 1.05rem;
-    display: inline-flex; align-items: center; justify-content: center;
+    height: 38px; min-width: 38px; padding: 0 10px; border-radius: 11px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 600; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
   }
+  .profile-pill {
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    height: 38px; padding: 0 12px; border-radius: 11px; cursor: pointer;
+    font-size: 0.84rem; font-weight: 700; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .profile-pill.logged-in { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
 
   /* Stats bar */
   .stats-grid {
@@ -98,26 +106,32 @@
   .c-green { color: var(--green); }
   .c-amber { color: var(--amber); }
   .c-red { color: var(--red); }
+  .c-primary { color: var(--primary); }
 
   /* Tabs */
   .tabs {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
     padding: 4px; margin-bottom: 12px;
   }
   .tab-btn {
     border: none; background: transparent; color: var(--text-muted); font-family: inherit;
-    font-size: 0.9rem; font-weight: 700; padding: 9px 6px; border-radius: 9px; cursor: pointer;
+    font-size: 0.85rem; font-weight: 700; padding: 9px 4px; border-radius: 9px; cursor: pointer;
+    position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .tab-btn.active { background: var(--primary-soft); color: var(--primary); }
+  .tab-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--amber); margin-left: 4px; vertical-align: middle;
+  }
 
-  /* Filters */
+  /* Panels & Filters */
   .panel {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow);
   }
   .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  select, input[type="text"] {
+  select, input[type="text"], input[type="password"] {
     font-family: inherit; font-size: 0.9rem; color: var(--text); background: var(--surface-2);
     border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; outline: none;
   }
@@ -129,6 +143,29 @@
     border-radius: 999px; cursor: pointer; transition: all 0.15s;
   }
   .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* Study Session Bar */
+  .session-bar {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 12px 14px; margin-bottom: 12px; box-shadow: var(--shadow);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  }
+  .session-bar.running { border-color: var(--primary); background: var(--primary-soft); }
+  .session-bar.paused { border-color: var(--amber); background: var(--amber-soft); }
+  .session-bar.ready { border-color: var(--green); background: var(--green-soft); }
+  .session-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .session-title { font-size: 0.9rem; font-weight: 700; }
+  .session-sub { font-size: 0.78rem; color: var(--text-muted); }
+  .session-timer {
+    font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em; min-width: 68px; text-align: center;
+  }
+  .session-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .btn-sm {
+    border: none; border-radius: 10px; padding: 7px 12px; font-family: inherit;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* Flashcard */
   .card-meta {
@@ -145,6 +182,9 @@
   .badge-reforms { background: var(--amber-soft); color: var(--amber); }
   .badge-task18 { background: var(--amber-soft); color: var(--amber); }
   .badge-date { background: var(--primary-soft); color: var(--primary); }
+  .badge-linked { background: var(--amber-soft); color: var(--amber); }
+  .badge-standalone { background: var(--teal-soft); color: var(--teal); }
+  .badge-green { background: var(--green-soft); color: var(--green); }
 
   .flashcard {
     background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
@@ -169,10 +209,11 @@
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px;
   }
   .btn {
-    border: none; border-radius: 12px; padding: 12px 10px; font-family: inherit;
+    border: none; border-radius: 12px; padding: 12px 14px; font-family: inherit;
     font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s;
   }
   .btn:active { opacity: 0.85; }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
   .btn-know { background: var(--green-soft); color: var(--green); }
   .btn-repeat { background: var(--amber-soft); color: var(--amber); }
   .btn-hard { background: var(--red-soft); color: var(--red); }
@@ -184,6 +225,12 @@
   }
 
   /* Quiz */
+  .quiz-mode-banner {
+    border-radius: 12px; padding: 10px 12px; margin-bottom: 12px;
+    font-size: 0.86rem; font-weight: 600; display: flex; flex-direction: column; gap: 4px;
+  }
+  .quiz-mode-banner.linked { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber); }
+  .quiz-mode-banner.standalone { background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal); }
   .quiz-q { font-size: 1.15rem; font-weight: 700; margin: 12px 0 16px; text-align: center; }
   .quiz-opts { display: flex; flex-direction: column; gap: 9px; }
   .quiz-opt {
@@ -193,6 +240,51 @@
   }
   .quiz-opt.correct { background: var(--green-soft); border-color: var(--green); color: var(--green); font-weight: 700; }
   .quiz-opt.wrong { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+
+  .quiz-summary-box {
+    border: 1px solid var(--border); border-radius: 14px; padding: 14px;
+    background: var(--surface-2); margin-bottom: 10px;
+  }
+  .quiz-summary-box h4 { font-size: 0.92rem; margin-bottom: 4px; }
+  .quiz-summary-box p { font-size: 0.86rem; color: var(--text-muted); }
+  .quiz-summary-box.ok { border-color: var(--green); background: var(--green-soft); }
+  .quiz-summary-box.ok h4, .quiz-summary-box.ok p { color: var(--green); }
+  .quiz-summary-box.warn { border-color: var(--amber); background: var(--amber-soft); }
+  .quiz-summary-box.warn h4, .quiz-summary-box.warn p { color: var(--amber); }
+
+  /* Competition / Scoreboard */
+  .comp-table {
+    width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.92rem;
+  }
+  .comp-table th, .comp-table td {
+    padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left;
+  }
+  .comp-table th { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .comp-table td.num, .comp-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .comp-table td.leader-cell { font-weight: 800; color: var(--green); }
+  .leaders-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
+  }
+  .leader-card {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px; font-size: 0.84rem;
+  }
+  .leader-card .lbl { font-size: 0.74rem; color: var(--text-muted); }
+  .leader-card .val { font-weight: 800; margin-top: 2px; }
+  .session-item {
+    border: 1px solid var(--border); background: var(--surface-2); border-radius: 12px;
+    padding: 10px 12px; margin-top: 8px; display: flex; justify-content: space-between;
+    align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .session-item-info { flex: 1; min-width: 180px; }
+  .session-item-title { font-weight: 700; font-size: 0.9rem; }
+  .session-item-meta { font-size: 0.78rem; color: var(--text-muted); }
+
+  .log-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.84rem; flex-wrap: wrap;
+  }
+  .log-item:last-child { border-bottom: none; }
 
   /* Reference */
   .search-input { width: 100%; margin-bottom: 10px; }
@@ -214,14 +306,34 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
     padding: 20px; width: 100%; max-width: 440px; box-shadow: var(--shadow);
   }
-  .modal h3 { margin-bottom: 12px; font-size: 1.1rem; }
+  .modal h3 { margin-bottom: 10px; font-size: 1.1rem; }
+  .modal p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; }
   .modal-actions { display: flex; flex-direction: column; gap: 8px; }
 
+  .profile-choice-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;
+  }
+  .profile-choice {
+    border: 2px solid var(--border); background: var(--surface-2); color: var(--text);
+    border-radius: 12px; padding: 12px 8px; font-family: inherit; font-size: 0.92rem;
+    font-weight: 700; cursor: pointer; text-align: center;
+  }
+  .profile-choice.selected { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+
+  .notice-box {
+    border: 1px solid var(--amber); background: var(--amber-soft); color: var(--amber);
+    border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  }
   .empty-box {
     text-align: center; padding: 32px 16px; background: var(--surface);
     border: 1px solid var(--border); border-radius: var(--radius);
   }
   .hidden { display: none !important; }
+  @media (max-width: 520px) {
+    .leaders-row { grid-template-columns: 1fr; }
+    .tab-btn { font-size: 0.78rem; padding: 8px 2px; }
+  }
 </style>
 </head>
 <body>
@@ -233,6 +345,7 @@
         <button class="subject-btn active" id="subjHistory" onclick="switchSubject('history')">🏛 История</button>
         <button class="subject-btn" id="subjSocial" onclick="switchSubject('social')">⚖️ Обществознание</button>
       </div>
+      <button class="profile-pill" id="profilePill" onclick="openProfileModal()">👤 Войти</button>
       <button class="icon-btn" title="Настройки и резервная копия" onclick="openSettings()">⚙️</button>
     </div>
   </div>
@@ -248,12 +361,14 @@
     <button class="tab-btn active" id="tabCards" onclick="switchMode('cards')">🗂 Карточки</button>
     <button class="tab-btn" id="tabQuiz" onclick="switchMode('quiz')">🎯 Тест</button>
     <button class="tab-btn" id="tabRef" onclick="switchMode('ref')">📖 Справочник</button>
+    <button class="tab-btn" id="tabComp" onclick="switchMode('comp')">🏆 Турнир<span id="compPendingDot" class="tab-dot hidden"></span></button>
   </div>
 
+  <!-- Filters Panel (hidden on Competition tab or during active quiz run) -->
   <div class="panel" id="filtersPanel">
     <div class="filter-row">
-      <select id="topicSelect" onchange="applyFilters()"><option value="all">Все темы</option></select>
-      <select id="statusSelect" style="flex:0 0 auto;min-width:140px;" onchange="applyFilters()">
+      <select id="topicSelect" onchange="onTopicOrFilterChange()"><option value="all">Все темы</option></select>
+      <select id="statusSelect" style="flex:0 0 auto;min-width:140px;" onchange="onTopicOrFilterChange()">
         <option value="all">Все статусы</option>
         <option value="unseen">Новые</option>
         <option value="repeat">Повторить</option>
@@ -263,6 +378,12 @@
     </div>
     <div class="chips" id="tagChips"></div>
   </div>
+
+  <!-- Study Session Bar (visible on Cards tab) -->
+  <div id="studySessionBar" class="session-bar hidden"></div>
+
+  <!-- Pending Session quick reminder on Cards tab -->
+  <div id="pendingQuickNotice" class="notice-box hidden"></div>
 
   <!-- Loading / Fallback -->
   <div id="loadBox" class="empty-box">
@@ -304,17 +425,40 @@
 
   <!-- Quiz View -->
   <div id="viewQuiz" class="hidden">
-    <div class="panel">
-      <div class="card-meta">
-        <span id="quizScore">Счёт: 0 / 0</span>
-        <div class="badges" id="quizBadges"></div>
+    <!-- Pre-start screen -->
+    <div class="panel hidden" id="quizIntroBox">
+      <div id="quizIntroBanner" class="quiz-mode-banner standalone"></div>
+      <div id="quizPendingMatchNotice" class="notice-box hidden"></div>
+      <div id="quizIntroDetails" style="font-size:0.92rem;margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="quizStartBtn" onclick="startQuizRun()">Начать тест</button>
+        <button class="btn btn-sec hidden" id="quizDeferBtn" onclick="deferLinkedQuiz()">Пройти позже</button>
       </div>
+    </div>
+
+    <!-- Active question screen -->
+    <div class="panel hidden" id="quizActiveBox">
+      <div id="quizActiveBanner" class="quiz-mode-banner standalone"></div>
+      <div class="card-meta">
+        <span id="quizProgressText">Вопрос 1 из 10</span>
+        <span id="quizScore">Верно: 0</span>
+      </div>
+      <div class="badges" id="quizBadges" style="margin-bottom:6px;"></div>
       <div class="card-topic-small" id="quizTopic" style="text-align:center;"></div>
       <div class="quiz-q" id="quizQ"></div>
       <div class="quiz-opts" id="quizOpts"></div>
-      <div style="margin-top:14px;text-align:center;">
-        <button class="btn btn-primary hidden" id="quizNextBtn" onclick="nextQuiz()">Следующий вопрос →</button>
+      <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sec" onclick="abortQuizRun()">Прервать тест</button>
+        <button class="btn btn-primary hidden" id="quizNextBtn" onclick="advanceQuizQuestion()">Следующий вопрос →</button>
       </div>
+    </div>
+
+    <!-- Result screen -->
+    <div class="panel hidden" id="quizResultBox">
+      <div id="quizResultBanner" class="quiz-mode-banner standalone"></div>
+      <div id="quizResultCards"></div>
+      <div id="quizSyncStatus" style="font-size:0.82rem;color:var(--text-muted);margin:10px 0;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;" id="quizResultActions"></div>
     </div>
   </div>
 
@@ -325,10 +469,94 @@
     <div class="ref-list" id="refList"></div>
   </div>
 
+  <!-- Competition View -->
+  <div id="viewComp" class="hidden">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:800;font-size:1.05rem;">🏆 Недельное соревнование</div>
+          <div id="compWeekLabel" style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;"></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn-sm btn-sec" id="compRefreshBtn" onclick="refreshCompetitionData()">🔄 Обновить</button>
+          <button class="btn-sm btn-primary" onclick="openProfileModal()">👤 Профиль</button>
+        </div>
+      </div>
+
+      <div id="compSyncAlert" class="notice-box hidden" style="margin-top:10px;margin-bottom:0;"></div>
+
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Участник</th>
+            <th class="num">Зачтённые занятия</th>
+            <th class="num">Сданные тесты</th>
+          </tr>
+        </thead>
+        <tbody id="compTableBody">
+          <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">Загрузка табло...</td></tr>
+        </tbody>
+      </table>
+
+      <div class="leaders-row" id="compLeadersRow"></div>
+    </div>
+
+    <div class="panel" id="compPendingPanel">
+      <div style="font-weight:800;font-size:0.96rem;">⏳ Ожидают теста</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">
+        20 минут обучения завершены. Пройдите связанный тест, чтобы занятие засчиталось в текущую неделю.
+      </div>
+      <div id="compPendingList"></div>
+    </div>
+
+    <div class="panel hidden" id="compRetakePanel">
+      <div style="font-weight:800;font-size:0.96rem;">🔁 Занятия с несданным тестом</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">
+        Занятие уже зачтено, но тест ниже 80%. Можно пересдать тест и получить +1 к сданным тестам (один раз на занятие).
+      </div>
+      <div id="compRetakeList"></div>
+    </div>
+
+    <div class="panel">
+      <div style="font-weight:800;font-size:0.96rem;margin-bottom:6px;">📋 Журнал зачётов этой недели</div>
+      <div id="compWeekLog" style="font-size:0.85rem;color:var(--text-muted);">Пока нет записей за эту неделю.</div>
+    </div>
+  </div>
+
   <!-- Empty filtered -->
   <div id="emptyFiltered" class="empty-box hidden">
     <div style="font-weight:700;margin-bottom:6px;">По выбранным фильтрам карточек нет</div>
     <button class="btn btn-sec" onclick="resetFilters()">Сбросить фильтры</button>
+  </div>
+</div>
+
+<!-- Profile Login Modal -->
+<div class="modal-bg" id="profileModal" onclick="if(event.target===this)closeProfileModal()">
+  <div class="modal">
+    <h3>👤 Выбор участника</h3>
+    <p>Выберите свой профиль и введите 4-значный PIN-код. Устройство запомнит вас для недельного соревнования.</p>
+    <div class="profile-choice-grid" id="profileChoiceGrid"></div>
+    <div style="margin-bottom:12px;">
+      <input type="password" id="profilePinInput" inputmode="numeric" maxlength="10" placeholder="PIN-код (например, 1111)" style="width:100%;">
+      <div id="profileErrorMsg" style="color:var(--red);font-size:0.82rem;margin-top:6px;" class="hidden"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="profileLoginBtn" onclick="submitProfileLogin()">Войти в профиль</button>
+      <button class="btn btn-hard hidden" id="profileLogoutBtn" onclick="logoutProfile()">Выйти из профиля</button>
+      <button class="btn btn-sec" onclick="closeProfileModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- 20-Minute Completed Modal -->
+<div class="modal-bg" id="sessionDoneModal">
+  <div class="modal">
+    <h3>⏱ 20 минут обучения завершены!</h3>
+    <p id="sessionDoneText"></p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="startQuizFromDoneModal()">🎯 Пройти тест по теме</button>
+      <button class="btn btn-sec" onclick="deferFromDoneModal()">Пройти позже</button>
+    </div>
   </div>
 </div>
 
@@ -349,6 +577,34 @@
 </div>
 
 <script>
+/* ==================== SUPABASE & COMPETITION CONFIG ==================== */
+const SUPABASE_URL = 'https://rptoiiallogljlydweid.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_7RBrNj91fS-uuM3iW9s6JQ_7N_E5B3M';
+const COMPETITION_TZ = 'Europe/Tallinn';
+
+// Optional URL test overrides for fast verification (?test_timer=10&test_date=2026-11-30)
+const URL_PARAMS = new URLSearchParams(window.location.search);
+const STUDY_TARGET_SECONDS = (() => {
+  const t = parseInt(URL_PARAMS.get('test_timer') || '', 10);
+  return (!isNaN(t) && t >= 3 && t <= 3600) ? t : 20 * 60;
+})();
+const TEST_DATE_OVERRIDE = /^\d{4}-\d{2}-\d{2}$/.test(URL_PARAMS.get('test_date') || '')
+  ? URL_PARAMS.get('test_date')
+  : null;
+
+const STORAGE_KEYS = {
+  profile: 'grom_vekov_comp_profile_v1',
+  activeSession: 'grom_vekov_active_study_session_v1',
+  pendingSessions: 'grom_vekov_pending_sessions_v1',
+  localAttempts: 'grom_vekov_local_attempts_v1'
+};
+
+const SUBJECT_LABELS = {
+  history: 'История',
+  social: 'Обществознание'
+};
+
+/* ==================== EXISTING TRAINER CONFIG (PRESERVED) ==================== */
 const SUBJECT_CONFIG = {
   history: {
     files: ['history_base.json', 'history_extra.json'],
@@ -356,7 +612,7 @@ const SUBJECT_CONFIG = {
     filters: [
       { id: 'all', label: 'Все' },
       { id: 'date', label: '📅 Только даты' },
-      { id: 'art', label: '🎨 Искусство' },
+      { id: 'art', label: '🎨 Культура' },
       { id: 'religion', label: '⛪ Религия' },
       { id: 'reforms', label: '📜 Реформы' }
     ]
@@ -371,11 +627,79 @@ const SUBJECT_CONFIG = {
   }
 };
 
-const ART_RE = /(архитектор|художник|скульптор|композитор|писател|поэт|драматург|иконопис|режисс[её]р|акт[её]р|певец|балет|опер[аыеу]|роман[аеу]?|повест[иь]|поэм[аыеу]|пьес[аыеу]|комеди[яию]|трагеди[яию]|картин[аыеу]|портрет|собор|храм|стил[ьяе]|барокко|классицизм|ампир|модерн|шатров|крестово-купольн|фреск|мозаик|парсун|передвижник|могуч[аеий]+ кучк|театр|кино|фильм|симфони|памятник|дворец|грановит|мавзоле|ансамбл|роспис|литерат|летопис|житие|слово о |сказание о |хождени[ея]|хожени[ея]|домострой|академия художеств|третьяков|консерватори|эрмитаж|авангард|символизм|акмеизм|футуризм|реализм|романтизм|сентиментализм|соцреализм|пролеткульт|самиздат|музык|живопис|зодч|книгопечат|типографи)/i;
-const RELIGION_RE = /(крещени|язычеств|православи|христианств|ислам|буддизм|католич|протестант|униат|церк[овь]|церковн|митрополит|патриарх|епископ|архиепископ|священник|монах|монашеств|монастыр|лавр[аыеу]|игумен|протопоп|свят[оыа][йхя]|канонизир|житие|ерес[иь]|еретик|раскол|старообряд|нестяжател|иосифлян|стяжател|синод|обер-прокурор|духовн[а-я]+ регламент|секуляризац|веротерпимост|свобода совести|антирелигиозн|атеизм|безбожник|волхв|перун|десятин[аыеу]|стоглав|автокефал|икон[аыеу]|библи|евангели|духовенств|храм|собор)/i;
-const REFORMS_RE = /(реформ|контрреформ|судебник|соборное уложение|русская правда|уложение о службе|генеральный регламент|духовный регламент|табель о рангах|жалованн[а-я]+ грамот|конституц|кодекс|декрет|манифест|указ о[б]? |отмен[аыеу] крепостн|отмен[аыеу] местничеств|отмен[аыеу] кормлен|отмен[аыеу] подушн|отмен[аыеу] внутренних|введени[ея]|учреждени[ея] (коллег|министерств|сенат|синод|губерн|земств|дум|патриарш)|избранн[а-я]+ рад|негласн[а-я]+ комитет|сперанск|кисел[её]в|канкрин|витте|столыпин|нэп|коллективизац|индустриализац|совнархоз|косыгин|перестройк|гласност|приватизац|шоков[а-я]+ терапи|монетизац|уроки и погост|погост|юрьев день|заповедн[а-я]+ лет|урочн[а-я]+ лет|земск[а-я]+ (реформ|самоуправлен)|судебн[а-я]+ реформ|военн[а-я]+ реформ|денежн[а-я]+ реформ|налогов[а-я]+ реформ|губернск[а-я]+ реформ|городск[а-я]+ реформ|школьн[а-я]+ реформ|университетск[а-я]+ устав|губн[а-я]+ реформ|приказн[а-я]+ систем|подушн[а-я]+ подат|подворн[а-я]+ |посошн[а-я]+ |рекрутск|всеобщ[а-я]+ воинск|вольных хлебопашц|обязанных крестьян|выкупн[а-я]+ (платеж|операц))/i;
-const DATE_RE = /(^\d{3,4}\b|\b\d{3,4}\s*[–—-]\s*\d{2,4}\b|\b(январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр)[а-я]*\s+\d{3,4}|\b[XVI]+\s*в)/i;
+function stripAccents(str) {
+  return (str || '').replace(/[\u0301\u00b4]/g, '');
+}
 
+const W = '(?:^|[^а-яё])';
+const WE = '(?=$|[^а-яё])';
+
+const ART_RE = new RegExp(
+  '(архитектор|художник|скульптор|композитор|писател|поэт|драматург|иконопис|' +
+  'режисс[её]р|акт[её]р|певец|балет|повест[иь]|поэм[аыеу]|пьес[аыеу]|комеди[яию]|трагеди[яию]|' +
+  'картин[аыеу]|портрет|барокко|классицизм|ампир|модерн|шатров|крестово-купольн|узорочь|' +
+  'фреск|мозаик|парсун|передвижник|могуч[аеий]+ кучк|театр|кино|фильм|симфони|памятник|' +
+  'дворец|грановит|мавзоле|ансамбл|роспис|литерат|летопис|житие|слов[аеуо]\\s+о\\s+|сказани[ея]\\s+о\\s+|' +
+  'хожд?ени[ея]\\s+(?:за три моря|по мукам)|домострой|вести-куранты|академия художеств|третьяков|' +
+  'консерватори|эрмитаж|авангард|символизм|акмеизм|футуризм|реализм|романтизм|сентиментализм|' +
+  'соцреализм|пролеткульт|самиздат|музык|живопис|зодч|книгопечат|типографи|' +
+  'эклектик[\\s\\S]*?(?:архитектур|стил)|' +
+  'десятинн[а-яё]+\\s+церк|строительств[а-яё]+\\s+(?:храм|собор)|перв[а-яё]+\\s+каменн[а-яё]+\\s+(?:храм|собор)|' +
+  'храм[а-яё]*\\s+(?:святой\\s+софии|покрова|христа\\s+спасителя|василия\\s+блаженного)|' +
+  '(?:архитектурн|художественн|суров|шатров|русско-византийск)[а-яё]*\\s+стил|' +
+  '(?:успенск|софийск|покровск|исаакиевск|казанск|дмитриевск|архангельск|благовещенск|петропавловск|троицк|смольн|спасск)[а-яё]*\\s+(?:собор|храм)|' +
+  W + 'роман(?:а|у|ом|е|ы|ам|ами|ах)?' + WE + '|' +
+  W + 'опер(?:а|ы|е|у|ой|ою|ам|ами|ах)?' + WE + '|' +
+  W + 'икон(?:а|ы|е|у|ой|ою|ам|ами|ах)?' + WE + ')',
+  'i'
+);
+
+const RELIGION_RE = new RegExp(
+  '(крещени|язычеств|православи|христианств|ислам|буддизм|католич|протестант|' +
+  'униат|церк[овь]|церковн|митрополит|патриарх|епископ|архиепископ|священник|' +
+  'монах|монашеств|монастыр|игумен|протопоп|свят[оыа][йхя]|канонизир|' +
+  'житие|ерес[иь]|еретик|старообряд|раскольник|нестяжател|иосифлян|стяжател|' +
+  'синод|обер-прокурор|духовн[а-яё]+ регламент|секуляризац|веротерпимост|' +
+  'свобода совести|антирелигиозн|атеизм|безбожник|волхв|перун|десятин[аыеу]|' +
+  'стоглав|автокефал|библи|евангели|духовенств|храм|' +
+  'крестоносц|крестов[а-яё]+\\s+поход|военно-монашеск|религиозн[а-яё]+\\s+(?:мир|войн)|' +
+  '(?:церковн|поместн|архиерейск|полоцк|успенск|софийск|покровск|исаакиевск|казанск|дмитриевск|архангельск|благовещенск|петропавловск|троицк)[а-яё]*\\s+собор|' +
+  '(?:церковн[а-яё]*\\s+раскол|раскол[а-яё]*\\s+(?:церкв|рпц|xvii|никон|обряд))|' +
+  W + 'лавр(?:а|ы|е|у|ой|ою)' + WE + '|' +
+  W + 'икон(?:а|ы|е|у|ой|ою|ам|ами|ах)?' + WE + ')',
+  'i'
+);
+
+const REFORMS_RE = new RegExp(
+  '(реформ|контрреформ|судебник|соборное уложение|русская правда|уложение о службе|' +
+  'генеральный регламент|духовный регламент|табель о рангах|жалованн[а-яё]+ грамот|' +
+  'конституц|кодекс|декрет|манифест|указ о[б]? |отмен[аыеу] крепостн|' +
+  'отмен[аыеу] местничеств|отмен[аыеу] кормлен|отмен[аыеу] подушн|отмен[аыеу] внутренних|' +
+  'введени[ея]|учреждени[ея] (?:коллег|министерств|сенат|синод|губерн|земств|дум|патриарш)|' +
+  '(?:создани[ея]|учреждени[ея])\\s+государственн[а-яё]+\\s+совет|' +
+  'министерств[а-яё]+\\s+государственн[а-яё]+\\s+имуществ|винн[а-яё]+\\s+монополи|' +
+  'избранн[а-яё]+ рад|негласн[а-яё]+ комитет|' +
+  '(?:сперанск|кисел[её]в|канкрин|витте|столыпин|косыгин)[а-яё]*[^.]{0,50}(?:реформ|кодификац|свод|денежн|аграрн|крестьян|указ|проект|министерств)|' +
+  '(?:реформ|кодификац|свод|денежн|аграрн|крестьян|проект)[а-яё]*[^.]{0,50}(?:сперанск|кисел[её]в|канкрин|витте|столыпин|косыгин)|' +
+  'столыпин[\\s\\S]*?(?:реформ|аграрн|общин|отруб|хутор|переселен)|' +
+  W + 'нэп(?:а|у|ом|е)?' + WE + '|нэпман|коллективизац|индустриализац|совнархоз|' +
+  'гласност|приватизац|шоков[а-яё]+ терапи|монетизац|уроки и погост|погост|юрьев день|' +
+  'заповедн[а-яё]+ лет|урочн[а-яё]+ лет|земск[а-яё]+ (?:реформ|самоуправлен)|судебн[а-яё]+ реформ|' +
+  'военн[а-яё]+ реформ|денежн[а-яё]+ реформ|налогов[а-яё]+ реформ|губернск[а-яё]+ реформ|' +
+  'городск[а-яё]+ реформ|школьн[а-яё]+ реформ|университетск[а-яё]+ устав|губн[а-яё]+ реформ|' +
+  'приказн[а-яё]+ систем|подушн[а-яё]+ подат|подворн[а-яё]+ |посошн[а-яё]+ |рекрутск|' +
+  'всеобщ[а-яё]+ воинск|вольных хлебопашц|обязанных крестьян|выкупн[а-яё]+ (?:платеж|операц)|' +
+  W + 'коллеги(?:и|й|ям|ями|ях)' + WE + '|' +
+  W + 'земств(?:а|о|ом|е|ам|ами|ах)?' + WE + ')',
+  'i'
+);
+
+const COLLEGIUM_BUILDING_RE = /здани[а-яё]*\s+(?:12|двенадцати)\s+коллеги[а-яё]*/gi;
+const PERESTROIKA_RE = /перестройк/i;
+const PERESTROIKA_EXCLUDE_RE = /перестройк[а-яё]*\s+экономик[а-яё]*\s+на\s+мирн/i;
+const DATE_RE = /(^\d{3,4}\b|\b\d{3,4}\s*[–—-]\s*\d{2,4}\b|\b(январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр)[а-яё]*\s+\d{3,4}|\b[XVI]+\s*в)/i;
+
+/* ==================== APP STATE ==================== */
 let currentSubject = 'history';
 let currentMode = 'cards';
 let activeTag = 'all';
@@ -384,8 +708,341 @@ let allCards = [];
 let filteredCards = [];
 let deckIndex = 0;
 let isFlipped = false;
-let quizRight = 0, quizTotal = 0, quizLocked = false, currentQuizCard = null;
 
+// Competition & Profile State
+let participantsList = [
+  { id: 'p1', display_name: 'Участник 1', pin_code: '1111' },
+  { id: 'p2', display_name: 'Участник 2', pin_code: '2222' }
+];
+let currentProfile = loadJsonStorage(STORAGE_KEYS.profile, null);
+let selectedModalParticipantId = null;
+
+// Study Session State (20 min active timer)
+// { participantId, subject, topic, elapsedSec, isPaused, startedAt }
+let activeStudySession = loadJsonStorage(STORAGE_KEYS.activeSession, null);
+let studyTickInterval = null;
+let lastCompletedPendingSession = null;
+
+// Remote + Local synced competition data
+let compData = {
+  participants: [],
+  sessions: [],      // all sessions fetched for current week + pending + retakeable
+  attempts: [],      // all attempts fetched for current week + linked attempts
+  lastError: null,
+  loaded: false
+};
+
+// Quiz Session State (supports both linked & standalone)
+let quizState = {
+  phase: 'intro', // 'intro' | 'active' | 'result'
+  mode: 'standalone', // 'standalone' | 'linked'
+  sessionId: null,
+  sessionAlreadyCredited: false,
+  subject: 'history',
+  topic: 'all',
+  questions: [],
+  qIndex: 0,
+  correctCount: 0,
+  passNeeded: 8,
+  locked: false,
+  attemptId: null,
+  submitting: false,
+  submitted: false,
+  resultSummary: null
+};
+
+/* ==================== UTILITIES ==================== */
+function loadJsonStorage(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch { return fallback; }
+}
+function saveJsonStorage(key, val) {
+  if (val === null || val === undefined) localStorage.removeItem(key);
+  else localStorage.setItem(key, JSON.stringify(val));
+}
+
+function generateUUID() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+function formatMMSS(sec) {
+  const s = Math.max(0, Math.floor(sec));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${String(m).padStart(2, '0')}:${String(r).padStart(2, '0')}`;
+}
+
+function getTallinnWeekInfo(dateObj = new Date()) {
+  let y, m, d;
+  if (TEST_DATE_OVERRIDE) {
+    [y, m, d] = TEST_DATE_OVERRIDE.split('-').map(Number);
+  } else {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: COMPETITION_TZ,
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(dateObj);
+    y = Number(parts.find(p => p.type === 'year').value);
+    m = Number(parts.find(p => p.type === 'month').value);
+    d = Number(parts.find(p => p.type === 'day').value);
+  }
+  const utcDay = new Date(Date.UTC(y, m - 1, d));
+  const dow = utcDay.getUTCDay(); // 0=Sun, 1=Mon..6=Sat
+  const diffToMon = (dow === 0 ? -6 : 1 - dow);
+  const mon = new Date(Date.UTC(y, m - 1, d + diffToMon));
+  const sun = new Date(Date.UTC(y, m - 1, d + diffToMon + 6));
+  const pad = n => String(n).padStart(2, '0');
+  const weekKey = `${mon.getUTCFullYear()}-${pad(mon.getUTCMonth() + 1)}-${pad(mon.getUTCDate())}`;
+  const label = `${pad(mon.getUTCDate())}.${pad(mon.getUTCMonth() + 1)} — ${pad(sun.getUTCDate())}.${pad(sun.getUTCMonth() + 1)}.${sun.getUTCFullYear()}`;
+  return { weekKey, label, todayKey: `${y}-${pad(m)}-${pad(d)}` };
+}
+
+function formatShortDateTallinn(isoStr) {
+  if (!isoStr) return '';
+  try {
+    return new Intl.DateTimeFormat('ru-RU', {
+      timeZone: COMPETITION_TZ,
+      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+    }).format(new Date(isoStr));
+  } catch { return ''; }
+}
+
+function calcPassThreshold(total) {
+  if (total <= 0) return 0;
+  return Math.ceil(total * 0.8);
+}
+
+/* ==================== SUPABASE REST API ==================== */
+async function sbFetch(path, options = {}) {
+  const headers = Object.assign({
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json'
+  }, options.headers || {});
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: options.method || 'GET',
+    headers,
+    body: options.body !== undefined ? JSON.stringify(options.body) : undefined
+  });
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  if (!res.ok) {
+    const err = new Error((data && data.message) ? data.message : `HTTP ${res.status}`);
+    err.status = res.status;
+    err.code = data && data.code;
+    err.details = data;
+    throw err;
+  }
+  return data;
+}
+
+async function fetchParticipants() {
+  try {
+    const rows = await sbFetch('participants?select=id,display_name,pin_code&order=id.asc');
+    if (Array.isArray(rows) && rows.length > 0) {
+      participantsList = rows;
+      // Refresh display_name if logged in
+      if (currentProfile) {
+        const match = rows.find(r => r.id === currentProfile.id);
+        if (match) {
+          currentProfile = { id: match.id, display_name: match.display_name };
+          saveJsonStorage(STORAGE_KEYS.profile, currentProfile);
+        }
+      }
+      renderProfilePill();
+    }
+  } catch (e) {
+    console.warn('Supabase participants fetch failed:', e);
+  }
+}
+
+async function refreshCompetitionData() {
+  const btn = document.getElementById('compRefreshBtn');
+  if (btn) btn.disabled = true;
+  const week = getTallinnWeekInfo();
+  try {
+    await fetchParticipants();
+    // Fetch sessions: current week credited OR pending_test OR recent completed (for retakes)
+    const [weekSessions, pendingSessions, allLinkedAttempts, weekAttempts] = await Promise.all([
+      sbFetch(`study_sessions?select=*&credited_week=eq.${week.weekKey}&order=credited_at.desc`),
+      sbFetch(`study_sessions?select=*&status=eq.pending_test&order=created_at.desc`),
+      sbFetch(`test_attempts?select=*&is_linked=eq.true&order=completed_at.desc&limit=200`),
+      sbFetch(`test_attempts?select=*&credited_week=eq.${week.weekKey}&order=completed_at.desc`)
+    ]);
+
+    // Merge sessions by id
+    const sessionMap = new Map();
+    [...(weekSessions || []), ...(pendingSessions || [])].forEach(s => sessionMap.set(s.id, s));
+
+    // Also include completed sessions from recent linked failed attempts (even if credited earlier)
+    const failedSessionIds = [...new Set(
+      (allLinkedAttempts || []).filter(a => a.session_id && !a.passed).map(a => a.session_id)
+    )].filter(id => !sessionMap.has(id));
+    if (failedSessionIds.length > 0) {
+      try {
+        const extra = await sbFetch(`study_sessions?select=*&id=in.(${failedSessionIds.join(',')})`);
+        (extra || []).forEach(s => sessionMap.set(s.id, s));
+      } catch {}
+    }
+
+    // Merge local pending sessions that haven't synced yet
+    const localPending = loadJsonStorage(STORAGE_KEYS.pendingSessions, []);
+    for (const lp of localPending) {
+      if (!sessionMap.has(lp.id)) {
+        try {
+          await sbFetch('study_sessions?on_conflict=id', {
+            method: 'POST',
+            headers: { 'Prefer': 'resolution=ignore-duplicates,return=representation' },
+            body: {
+              id: lp.id,
+              participant_id: lp.participant_id,
+              subject: lp.subject,
+              topic: lp.topic,
+              status: 'pending_test',
+              created_at: lp.created_at
+            }
+          });
+          sessionMap.set(lp.id, lp);
+        } catch {
+          sessionMap.set(lp.id, lp);
+        }
+      }
+    }
+
+    // Sync local pending cache with server truth
+    const serverPendingForMe = currentProfile
+      ? [...sessionMap.values()].filter(s => s.participant_id === currentProfile.id && s.status === 'pending_test')
+      : [];
+    saveJsonStorage(STORAGE_KEYS.pendingSessions, serverPendingForMe);
+
+    // Merge attempts by id
+    const attemptMap = new Map();
+    [...(weekAttempts || []), ...(allLinkedAttempts || [])].forEach(a => attemptMap.set(a.id, a));
+
+    compData = {
+      participants: participantsList,
+      sessions: [...sessionMap.values()],
+      attempts: [...attemptMap.values()],
+      lastError: null,
+      loaded: true
+    };
+  } catch (e) {
+    compData.lastError = 'Нет связи с сервером соревнования (' + (e.message || 'ошибка сети') + '). Проверьте интернет и нажмите «Обновить».';
+    // Fallback to local pending
+    const localPending = loadJsonStorage(STORAGE_KEYS.pendingSessions, []);
+    if (!compData.loaded) {
+      compData.participants = participantsList;
+      compData.sessions = localPending;
+      compData.attempts = [];
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+    updatePendingIndicators();
+    if (currentMode === 'comp') renderCompetitionView();
+    if (currentMode === 'cards') renderStudySessionBar();
+    if (currentMode === 'quiz' && quizState.phase === 'intro') renderQuizIntro();
+  }
+}
+
+/* ==================== PROFILE LOGIN ==================== */
+function renderProfilePill() {
+  const pill = document.getElementById('profilePill');
+  if (currentProfile) {
+    pill.textContent = '👤 ' + currentProfile.display_name;
+    pill.classList.add('logged-in');
+  } else {
+    pill.textContent = '👤 Войти';
+    pill.classList.remove('logged-in');
+  }
+}
+
+async function openProfileModal() {
+  document.getElementById('profileModal').classList.add('open');
+  document.getElementById('profilePinInput').value = '';
+  document.getElementById('profileErrorMsg').classList.add('hidden');
+  document.getElementById('profileLogoutBtn').classList.toggle('hidden', !currentProfile);
+  selectedModalParticipantId = currentProfile ? currentProfile.id : (participantsList[0] ? participantsList[0].id : 'p1');
+  renderProfileChoices();
+  await fetchParticipants();
+  renderProfileChoices();
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').classList.remove('open');
+}
+
+function renderProfileChoices() {
+  const grid = document.getElementById('profileChoiceGrid');
+  grid.innerHTML = participantsList.map(p => `
+    <button type="button" class="profile-choice ${selectedModalParticipantId === p.id ? 'selected' : ''}"
+      onclick="selectModalParticipant('${escapeHtml(p.id)}')">
+      ${escapeHtml(p.display_name)}
+    </button>
+  `).join('');
+}
+
+function selectModalParticipant(id) {
+  selectedModalParticipantId = id;
+  renderProfileChoices();
+  document.getElementById('profileErrorMsg').classList.add('hidden');
+  document.getElementById('profilePinInput').focus();
+}
+
+async function submitProfileLogin() {
+  const pin = (document.getElementById('profilePinInput').value || '').trim();
+  const errEl = document.getElementById('profileErrorMsg');
+  const p = participantsList.find(x => x.id === selectedModalParticipantId);
+  if (!p) {
+    errEl.textContent = 'Выберите участника.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!pin || pin !== String(p.pin_code)) {
+    errEl.textContent = 'Неверный PIN-код. Проверьте код в таблице participants в Supabase.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  currentProfile = { id: p.id, display_name: p.display_name };
+  saveJsonStorage(STORAGE_KEYS.profile, currentProfile);
+  // If an active study session belonged to another participant, pause it
+  if (activeStudySession && activeStudySession.participantId !== currentProfile.id) {
+    activeStudySession = null;
+    saveJsonStorage(STORAGE_KEYS.activeSession, null);
+  }
+  renderProfilePill();
+  closeProfileModal();
+  await refreshCompetitionData();
+  renderStudySessionBar();
+}
+
+function logoutProfile() {
+  currentProfile = null;
+  saveJsonStorage(STORAGE_KEYS.profile, null);
+  activeStudySession = null;
+  saveJsonStorage(STORAGE_KEYS.activeSession, null);
+  renderProfilePill();
+  closeProfileModal();
+  updatePendingIndicators();
+  renderStudySessionBar();
+  if (currentMode === 'comp') renderCompetitionView();
+}
+
+/* ==================== EXISTING PROGRESS & CARDS (PRESERVED) ==================== */
 function getProgress(subj = currentSubject) {
   try {
     return JSON.parse(localStorage.getItem(SUBJECT_CONFIG[subj].storageKey) || '{}');
@@ -398,13 +1055,21 @@ function saveProgress(prog, subj = currentSubject) {
 function enrichCard(card, subj) {
   const c = Object.assign({}, card);
   if (subj === 'history') {
-    const tags = Array.isArray(c.tags) ? [...c.tags] : [];
-    const txt = (c.front || '') + ' ' + (c.back || '');
-    if (!tags.includes('art') && ART_RE.test(txt)) tags.push('art');
-    if (!tags.includes('religion') && RELIGION_RE.test(txt)) tags.push('religion');
-    if (!tags.includes('reforms') && REFORMS_RE.test(txt)) tags.push('reforms');
-    c.tags = tags;
-    c.isDate = c.type === 'date' || DATE_RE.test(c.front || '');
+    const hasManualTags = Array.isArray(c.tags) && c.tags.length > 0;
+    if (hasManualTags) {
+      c.tags = [...c.tags];
+    } else {
+      const tags = [];
+      const txt = stripAccents((c.front || '') + ' ' + (c.back || ''));
+      const txtReforms = txt.replace(COLLEGIUM_BUILDING_RE, '');
+      if (ART_RE.test(txt)) tags.push('art');
+      if (RELIGION_RE.test(txt)) tags.push('religion');
+      if (REFORMS_RE.test(txtReforms) || (PERESTROIKA_RE.test(txtReforms) && !PERESTROIKA_EXCLUDE_RE.test(txtReforms))) {
+        tags.push('reforms');
+      }
+      c.tags = tags;
+    }
+    c.isDate = c.type === 'date' || DATE_RE.test(stripAccents(c.front || ''));
   } else {
     c.tags = c.type === 'task18' ? ['task18'] : [];
     c.isDate = false;
@@ -412,20 +1077,8 @@ function enrichCard(card, subj) {
   return c;
 }
 
-async function loadSubject(subj) {
-  currentSubject = subj;
-  activeTag = 'all';
-  document.getElementById('subjHistory').classList.toggle('active', subj === 'history');
-  document.getElementById('subjSocial').classList.toggle('active', subj === 'social');
-  renderTagChips();
-
-  if (cache[subj]) {
-    allCards = cache[subj];
-    afterLoad();
-    return;
-  }
-
-  showLoading('Загрузка базы карточек...');
+async function ensureSubjectLoaded(subj) {
+  if (cache[subj]) return cache[subj];
   const files = SUBJECT_CONFIG[subj].files;
   const loaded = [];
   for (let i = 0; i < files.length; i++) {
@@ -441,6 +1094,34 @@ async function loadSubject(subj) {
       // Optional secondary files are skipped silently
     }
   }
+  if (loaded.length > 0) {
+    cache[subj] = loaded;
+  }
+  return loaded;
+}
+
+async function loadSubject(subj, opts = {}) {
+  const prevSubject = currentSubject;
+  currentSubject = subj;
+  activeTag = 'all';
+  document.getElementById('subjHistory').classList.toggle('active', subj === 'history');
+  document.getElementById('subjSocial').classList.toggle('active', subj === 'social');
+  renderTagChips();
+
+  // Pause running study session if switching to another subject
+  if (prevSubject !== subj && activeStudySession && !activeStudySession.isPaused && activeStudySession.subject !== subj) {
+    activeStudySession.isPaused = true;
+    saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+  }
+
+  if (cache[subj]) {
+    allCards = cache[subj];
+    afterLoad(opts);
+    return;
+  }
+
+  showLoading('Загрузка базы карточек...');
+  const loaded = await ensureSubjectLoaded(subj);
 
   if (loaded.length === 0) {
     document.getElementById('loadMsg').textContent = 'Загрузите базу карточек';
@@ -448,9 +1129,8 @@ async function loadSubject(subj) {
     return;
   }
 
-  cache[subj] = loaded;
   allCards = loaded;
-  afterLoad();
+  afterLoad(opts);
 }
 
 function showLoading(msg) {
@@ -460,12 +1140,19 @@ function showLoading(msg) {
   document.getElementById('viewCards').classList.add('hidden');
   document.getElementById('viewQuiz').classList.add('hidden');
   document.getElementById('viewRef').classList.add('hidden');
+  document.getElementById('viewComp').classList.add('hidden');
   document.getElementById('emptyFiltered').classList.add('hidden');
 }
 
-function afterLoad() {
+function afterLoad(opts = {}) {
   document.getElementById('loadBox').classList.add('hidden');
   populateTopics();
+  if (opts.selectTopic) {
+    const sel = document.getElementById('topicSelect');
+    if ([...sel.options].some(o => o.value === opts.selectTopic)) {
+      sel.value = opts.selectTopic;
+    }
+  }
   updateStats();
   applyFilters();
 }
@@ -525,6 +1212,18 @@ function resetFilters() {
   applyFilters();
 }
 
+function onTopicOrFilterChange() {
+  const topic = document.getElementById('topicSelect').value;
+  // Auto-pause active study session if user switches away from its topic
+  if (activeStudySession && !activeStudySession.isPaused) {
+    if (activeStudySession.subject !== currentSubject || activeStudySession.topic !== topic) {
+      activeStudySession.isPaused = true;
+      saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+    }
+  }
+  applyFilters();
+}
+
 function applyFilters() {
   const topic = document.getElementById('topicSelect').value;
   const status = document.getElementById('statusSelect').value;
@@ -541,7 +1240,11 @@ function applyFilters() {
 
   deckIndex = 0;
   isFlipped = false;
-  quizRight = 0; quizTotal = 0;
+
+  // If on standalone quiz intro, refresh intro counts for new filters
+  if (currentMode === 'quiz' && quizState.phase === 'intro' && quizState.mode === 'standalone') {
+    prepareStandaloneQuizIntro();
+  }
   renderCurrentMode();
 }
 
@@ -562,45 +1265,371 @@ function updateStats() {
 
 function switchSubject(subj) {
   if (subj === currentSubject && cache[subj]) return;
+  if (currentMode === 'quiz' && quizState.phase === 'active') {
+    if (!confirm('Прервать текущий тест и переключить предмет?')) return;
+    quizState.phase = 'intro';
+    quizState.mode = 'standalone';
+    quizState.sessionId = null;
+  }
   loadSubject(subj);
 }
 
 function switchMode(mode) {
+  if (currentMode === 'quiz' && mode !== 'quiz' && quizState.phase === 'active') {
+    if (!confirm('Тест ещё не завершён. Прервать его?')) return;
+    quizState.phase = 'intro';
+    quizState.mode = 'standalone';
+    quizState.sessionId = null;
+  }
   currentMode = mode;
   document.getElementById('tabCards').classList.toggle('active', mode === 'cards');
   document.getElementById('tabQuiz').classList.toggle('active', mode === 'quiz');
   document.getElementById('tabRef').classList.toggle('active', mode === 'ref');
+  document.getElementById('tabComp').classList.toggle('active', mode === 'comp');
+
+  if (mode === 'quiz' && quizState.mode !== 'linked') {
+    prepareStandaloneQuizIntro();
+  }
+  if (mode === 'comp') {
+    refreshCompetitionData();
+  }
   renderCurrentMode();
 }
 
 function renderCurrentMode() {
-  if (!allCards.length) return;
+  const showFilters = (currentMode === 'cards' || currentMode === 'ref' ||
+    (currentMode === 'quiz' && quizState.phase === 'intro' && quizState.mode === 'standalone'));
+  document.getElementById('filtersPanel').classList.toggle('hidden', !showFilters);
+
   document.getElementById('viewCards').classList.add('hidden');
   document.getElementById('viewQuiz').classList.add('hidden');
   document.getElementById('viewRef').classList.add('hidden');
+  document.getElementById('viewComp').classList.add('hidden');
   document.getElementById('emptyFiltered').classList.add('hidden');
+  document.getElementById('studySessionBar').classList.add('hidden');
+  document.getElementById('pendingQuickNotice').classList.add('hidden');
+
+  if (currentMode === 'comp') {
+    document.getElementById('viewComp').classList.remove('hidden');
+    renderCompetitionView();
+    return;
+  }
+
+  if (!allCards.length) return;
+
+  if (currentMode === 'quiz') {
+    document.getElementById('viewQuiz').classList.remove('hidden');
+    renderQuizView();
+    return;
+  }
+
+  if (currentMode === 'cards') {
+    renderStudySessionBar();
+    renderPendingQuickNotice();
+  }
 
   if (filteredCards.length === 0) {
     document.getElementById('emptyFiltered').classList.remove('hidden');
     return;
   }
+
   if (currentMode === 'cards') {
     document.getElementById('viewCards').classList.remove('hidden');
     renderCard();
-  } else if (currentMode === 'quiz') {
-    document.getElementById('viewQuiz').classList.remove('hidden');
-    nextQuiz();
   } else {
     document.getElementById('viewRef').classList.remove('hidden');
     renderRef();
   }
 }
 
+/* ==================== STUDY SESSION TIMER (20 MIN ACTIVE) ==================== */
+function getMyPendingSessions() {
+  if (!currentProfile) return [];
+  return (compData.sessions || []).filter(
+    s => s.participant_id === currentProfile.id && s.status === 'pending_test'
+  );
+}
+
+function getMyRetakeableSessions() {
+  if (!currentProfile) return [];
+  const passedSessionIds = new Set(
+    (compData.attempts || [])
+      .filter(a => a.participant_id === currentProfile.id && a.is_linked && a.passed && a.session_id)
+      .map(a => a.session_id)
+  );
+  return (compData.sessions || []).filter(
+    s => s.participant_id === currentProfile.id && s.status === 'completed' && !passedSessionIds.has(s.id)
+  );
+}
+
+function updatePendingIndicators() {
+  const pending = getMyPendingSessions();
+  const dot = document.getElementById('compPendingDot');
+  if (dot) dot.classList.toggle('hidden', pending.length === 0);
+}
+
+function renderPendingQuickNotice() {
+  const box = document.getElementById('pendingQuickNotice');
+  const pending = getMyPendingSessions();
+  if (currentMode !== 'cards' || pending.length === 0) {
+    box.classList.add('hidden');
+    return;
+  }
+  const first = pending[0];
+  box.classList.remove('hidden');
+  box.innerHTML = `
+    <div>
+      <strong>⏳ Ожидает теста (${pending.length}):</strong>
+      ${escapeHtml(SUBJECT_LABELS[first.subject] || first.subject)} — «${escapeHtml(first.topic)}»
+    </div>
+    <button class="btn-sm btn-primary" onclick="launchLinkedQuizBySessionId('${escapeHtml(first.id)}')">
+      Пройти тест по теме
+    </button>
+  `;
+}
+
+function isTimerAllowedToTick() {
+  if (!activeStudySession || activeStudySession.isPaused) return false;
+  if (!currentProfile || activeStudySession.participantId !== currentProfile.id) return false;
+  if (currentMode !== 'cards') return false;
+  if (document.visibilityState !== 'visible') return false;
+  const selectedTopic = document.getElementById('topicSelect').value;
+  if (currentSubject !== activeStudySession.subject) return false;
+  if (selectedTopic !== activeStudySession.topic) return false;
+  return true;
+}
+
+function startStudyTicker() {
+  if (studyTickInterval) clearInterval(studyTickInterval);
+  studyTickInterval = setInterval(() => {
+    if (!activeStudySession) return;
+    if (isTimerAllowedToTick()) {
+      activeStudySession.elapsedSec = (activeStudySession.elapsedSec || 0) + 1;
+      if (activeStudySession.elapsedSec % 5 === 0 || activeStudySession.elapsedSec >= STUDY_TARGET_SECONDS) {
+        saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+      }
+      if (activeStudySession.elapsedSec >= STUDY_TARGET_SECONDS) {
+        completeActiveStudySession();
+        return;
+      }
+      const timerEl = document.getElementById('studyTimerVal');
+      if (timerEl) {
+        timerEl.textContent = formatMMSS(STUDY_TARGET_SECONDS - activeStudySession.elapsedSec);
+      }
+    }
+  }, 1000);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (activeStudySession) {
+    saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+    if (currentMode === 'cards') renderStudySessionBar();
+  }
+});
+
+function renderStudySessionBar() {
+  const bar = document.getElementById('studySessionBar');
+  if (currentMode !== 'cards') {
+    bar.classList.add('hidden');
+    return;
+  }
+  bar.classList.remove('hidden');
+  const selectedTopic = document.getElementById('topicSelect').value;
+
+  // Case 1: Active or paused session exists
+  if (activeStudySession && currentProfile && activeStudySession.participantId === currentProfile.id) {
+    const remaining = Math.max(0, STUDY_TARGET_SECONDS - (activeStudySession.elapsedSec || 0));
+    const matchesCurrent = (activeStudySession.subject === currentSubject && activeStudySession.topic === selectedTopic);
+    const running = !activeStudySession.isPaused && matchesCurrent;
+    bar.className = 'session-bar ' + (running ? 'running' : 'paused');
+    const statusText = running
+      ? 'Идёт активное обучение (засчитывается только в режиме карточек)'
+      : (!matchesCurrent
+        ? 'На паузе: выбрана другая тема или предмет'
+        : 'Занятие на паузе');
+
+    bar.innerHTML = `
+      <div class="session-info">
+        <div class="session-title">⏱ Занятие: ${escapeHtml(SUBJECT_LABELS[activeStudySession.subject])} — ${escapeHtml(activeStudySession.topic)}</div>
+        <div class="session-sub">${statusText}</div>
+      </div>
+      <div class="session-timer" id="studyTimerVal">${formatMMSS(remaining)}</div>
+      <div class="session-actions">
+        ${!matchesCurrent
+          ? `<button class="btn-sm btn-primary" onclick="returnToActiveSession()">Вернуться к теме</button>`
+          : (activeStudySession.isPaused
+              ? `<button class="btn-sm btn-primary" onclick="togglePauseStudySession()">▶ Продолжить</button>`
+              : `<button class="btn-sm btn-sec" onclick="togglePauseStudySession()">⏸ Пауза</button>`)}
+        <button class="btn-sm btn-hard" onclick="cancelActiveStudySession()">✕</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Case 2: No active session — show Start Study Session CTA
+  bar.className = 'session-bar';
+  const topicPicked = selectedTopic && selectedTopic !== 'all';
+  const targetMinLabel = STUDY_TARGET_SECONDS >= 60
+    ? `${Math.round(STUDY_TARGET_SECONDS / 60)} мин`
+    : `${STUDY_TARGET_SECONDS} сек (тест)`;
+
+  if (!currentProfile) {
+    bar.innerHTML = `
+      <div class="session-info">
+        <div class="session-title">🏁 Учебное занятие (${targetMinLabel} + тест по теме)</div>
+        <div class="session-sub">Войдите в профиль участника, чтобы занятия шли в недельное соревнование.</div>
+      </div>
+      <div class="session-actions">
+        <button class="btn-sm btn-primary" onclick="openProfileModal()">👤 Войти</button>
+      </div>
+    `;
+  } else if (!topicPicked) {
+    bar.innerHTML = `
+      <div class="session-info">
+        <div class="session-title">🏁 Учебное занятие (${targetMinLabel} + тест по теме)</div>
+        <div class="session-sub">Выберите конкретную тему в списке выше, затем нажмите «Начать занятие».</div>
+      </div>
+      <div class="session-actions">
+        <button class="btn-sm btn-primary" disabled>Начать занятие</button>
+      </div>
+    `;
+  } else {
+    bar.innerHTML = `
+      <div class="session-info">
+        <div class="session-title">🏁 Тема: ${escapeHtml(selectedTopic)}</div>
+        <div class="session-sub">${escapeHtml(SUBJECT_LABELS[currentSubject])} · ${targetMinLabel} активного изучения, затем тест для зачёта.</div>
+      </div>
+      <div class="session-actions">
+        <button class="btn-sm btn-primary" onclick="startStudySession()">▶ Начать занятие</button>
+      </div>
+    `;
+  }
+}
+
+function startStudySession() {
+  if (!currentProfile) {
+    openProfileModal();
+    return;
+  }
+  const topic = document.getElementById('topicSelect').value;
+  if (!topic || topic === 'all') {
+    alert('Сначала выберите конкретную тему в выпадающем списке.');
+    return;
+  }
+  activeStudySession = {
+    participantId: currentProfile.id,
+    subject: currentSubject,
+    topic: topic,
+    elapsedSec: 0,
+    isPaused: false,
+    startedAt: new Date().toISOString()
+  };
+  saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+  renderStudySessionBar();
+}
+
+function togglePauseStudySession() {
+  if (!activeStudySession) return;
+  activeStudySession.isPaused = !activeStudySession.isPaused;
+  saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+  renderStudySessionBar();
+}
+
+async function returnToActiveSession() {
+  if (!activeStudySession) return;
+  const targetSubj = activeStudySession.subject;
+  const targetTopic = activeStudySession.topic;
+  activeStudySession.isPaused = false;
+  saveJsonStorage(STORAGE_KEYS.activeSession, activeStudySession);
+  if (currentSubject !== targetSubj) {
+    await loadSubject(targetSubj, { selectTopic: targetTopic });
+  } else {
+    document.getElementById('topicSelect').value = targetTopic;
+    applyFilters();
+  }
+  renderStudySessionBar();
+}
+
+function cancelActiveStudySession() {
+  if (!confirm('Отменить текущее учебное занятие? Накопленное время будет сброшено.')) return;
+  activeStudySession = null;
+  saveJsonStorage(STORAGE_KEYS.activeSession, null);
+  renderStudySessionBar();
+}
+
+async function completeActiveStudySession() {
+  if (!activeStudySession) return;
+  const finished = Object.assign({}, activeStudySession);
+  activeStudySession = null;
+  saveJsonStorage(STORAGE_KEYS.activeSession, null);
+
+  const sessionRecord = {
+    id: generateUUID(),
+    participant_id: finished.participantId,
+    subject: finished.subject,
+    topic: finished.topic,
+    status: 'pending_test',
+    created_at: new Date().toISOString(),
+    credited_at: null,
+    credited_week: null
+  };
+
+  // Save locally first so reload never loses it
+  const localPending = loadJsonStorage(STORAGE_KEYS.pendingSessions, []);
+  localPending.unshift(sessionRecord);
+  saveJsonStorage(STORAGE_KEYS.pendingSessions, localPending);
+
+  // Add to in-memory compData
+  compData.sessions = [sessionRecord, ...(compData.sessions || []).filter(s => s.id !== sessionRecord.id)];
+  lastCompletedPendingSession = sessionRecord;
+
+  // Push to Supabase
+  try {
+    await sbFetch('study_sessions?on_conflict=id', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=ignore-duplicates,return=representation' },
+      body: {
+        id: sessionRecord.id,
+        participant_id: sessionRecord.participant_id,
+        subject: sessionRecord.subject,
+        topic: sessionRecord.topic,
+        status: 'pending_test',
+        created_at: sessionRecord.created_at
+      }
+    });
+  } catch (e) {
+    console.warn('Could not immediately sync pending session:', e);
+  }
+
+  updatePendingIndicators();
+  renderStudySessionBar();
+  renderPendingQuickNotice();
+
+  document.getElementById('sessionDoneText').innerHTML =
+    `Занятие по теме <strong>«${escapeHtml(sessionRecord.topic)}»</strong> (${escapeHtml(SUBJECT_LABELS[sessionRecord.subject])}) получило статус <strong>«Ожидает теста»</strong>.<br><br>` +
+    `Счётчик зачтённых занятий обновится только после завершения связанного теста по этой теме.`;
+  document.getElementById('sessionDoneModal').classList.add('open');
+}
+
+function deferFromDoneModal() {
+  document.getElementById('sessionDoneModal').classList.remove('open');
+  lastCompletedPendingSession = null;
+}
+
+function startQuizFromDoneModal() {
+  document.getElementById('sessionDoneModal').classList.remove('open');
+  if (lastCompletedPendingSession) {
+    launchLinkedQuiz(lastCompletedPendingSession, false);
+    lastCompletedPendingSession = null;
+  }
+}
+
+/* ==================== CARDS MODE (PRESERVED) ==================== */
 function renderBadgesHtml(c) {
   const out = [];
   if (c.isDate) out.push('<span class="badge badge-date">📅 Дата</span>');
   (c.tags || []).forEach(t => {
-    if (t === 'art') out.push('<span class="badge badge-art">🎨 Искусство</span>');
+    if (t === 'art') out.push('<span class="badge badge-art">🎨 Культура</span>');
     if (t === 'religion') out.push('<span class="badge badge-religion">⛪ Религия</span>');
     if (t === 'reforms') out.push('<span class="badge badge-reforms">📜 Реформы</span>');
     if (t === 'task18') out.push('<span class="badge badge-task18">⭐ №18</span>');
@@ -648,57 +1677,719 @@ function rateCard(status) {
   nextCard();
 }
 
-function nextQuiz() {
-  quizLocked = false;
-  document.getElementById('quizNextBtn').classList.add('hidden');
-  document.getElementById('quizScore').textContent = `Счёт: ${quizRight} / ${quizTotal}`;
-  const card = filteredCards[Math.floor(Math.random() * filteredCards.length)];
-  currentQuizCard = card;
+/* ==================== QUIZ MODE (LINKED & STANDALONE) ==================== */
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildQuestionSet(cardsPool, maxQuestions = 10) {
+  // Deduplicate by card.id (and avoid duplicate front+back)
+  const unique = [];
+  const seen = new Set();
+  for (const c of cardsPool) {
+    if (!c || !c.front || !c.back) continue;
+    const key = c.id || (c.front + '||' + c.back);
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(c);
+    }
+  }
+  const picked = shuffleArray(unique).slice(0, maxQuestions);
+  return picked;
+}
+
+function prepareStandaloneQuizIntro() {
+  const selectedTopic = document.getElementById('topicSelect').value;
+  const pool = filteredCards.length > 0 ? filteredCards : [];
+  const qCount = Math.min(10, buildQuestionSet(pool, 10).length);
+  quizState = {
+    phase: 'intro',
+    mode: 'standalone',
+    sessionId: null,
+    sessionAlreadyCredited: false,
+    subject: currentSubject,
+    topic: selectedTopic,
+    questions: [],
+    qIndex: 0,
+    correctCount: 0,
+    passNeeded: calcPassThreshold(qCount),
+    availableCount: qCount,
+    locked: false,
+    attemptId: null,
+    submitting: false,
+    submitted: false,
+    resultSummary: null
+  };
+}
+
+async function launchLinkedQuizBySessionId(sessionId, isRetake = false) {
+  const session = (compData.sessions || []).find(s => s.id === sessionId);
+  if (!session) {
+    alert('Занятие не найдено. Обновите данные во вкладке «Турнир».');
+    return;
+  }
+  await launchLinkedQuiz(session, isRetake || session.status === 'completed');
+}
+
+async function launchLinkedQuiz(session, sessionAlreadyCredited) {
+  if (!currentProfile) {
+    openProfileModal();
+    return;
+  }
+  // Automatically switch subject & topic
+  await ensureSubjectLoaded(session.subject);
+  if (currentSubject !== session.subject) {
+    await loadSubject(session.subject, { selectTopic: session.topic });
+  } else {
+    const sel = document.getElementById('topicSelect');
+    if ([...sel.options].some(o => o.value === session.topic)) {
+      sel.value = session.topic;
+    }
+  }
+  const subjCards = cache[session.subject] || allCards;
+  const topicCards = subjCards.filter(c => (c.topic || 'Без темы') === session.topic);
+  const qCount = Math.min(10, buildQuestionSet(topicCards, 10).length);
+
+  quizState = {
+    phase: 'intro',
+    mode: 'linked',
+    sessionId: session.id,
+    sessionAlreadyCredited: Boolean(sessionAlreadyCredited || session.status === 'completed'),
+    subject: session.subject,
+    topic: session.topic,
+    questions: [],
+    qIndex: 0,
+    correctCount: 0,
+    passNeeded: calcPassThreshold(qCount),
+    availableCount: qCount,
+    locked: false,
+    attemptId: null,
+    submitting: false,
+    submitted: false,
+    resultSummary: null
+  };
+
+  currentMode = 'quiz';
+  document.getElementById('tabCards').classList.remove('active');
+  document.getElementById('tabQuiz').classList.add('active');
+  document.getElementById('tabRef').classList.remove('active');
+  document.getElementById('tabComp').classList.remove('active');
+  renderCurrentMode();
+}
+
+function renderQuizView() {
+  document.getElementById('quizIntroBox').classList.toggle('hidden', quizState.phase !== 'intro');
+  document.getElementById('quizActiveBox').classList.toggle('hidden', quizState.phase !== 'active');
+  document.getElementById('quizResultBox').classList.toggle('hidden', quizState.phase !== 'result');
+
+  if (quizState.phase === 'intro') renderQuizIntro();
+  else if (quizState.phase === 'active') renderQuizQuestion();
+  else if (quizState.phase === 'result') renderQuizResult();
+}
+
+function renderQuizIntro() {
+  const banner = document.getElementById('quizIntroBanner');
+  const notice = document.getElementById('quizPendingMatchNotice');
+  const details = document.getElementById('quizIntroDetails');
+  const startBtn = document.getElementById('quizStartBtn');
+  const deferBtn = document.getElementById('quizDeferBtn');
+
+  if (quizState.mode === 'linked') {
+    banner.className = 'quiz-mode-banner linked';
+    banner.innerHTML = `
+      <div>🔗 ${quizState.sessionAlreadyCredited ? 'Пересдача связанного теста занятия' : 'Связанный тест для зачёта занятия'}</div>
+      <div style="font-weight:500;font-size:0.82rem;">
+        ${escapeHtml(SUBJECT_LABELS[quizState.subject])} · Тема: «${escapeHtml(quizState.topic)}»
+      </div>
+    `;
+    notice.classList.add('hidden');
+    deferBtn.classList.remove('hidden');
+  } else {
+    banner.className = 'quiz-mode-banner standalone';
+    const topicLabel = quizState.topic === 'all' ? 'Все темы (по текущим фильтрам)' : `Тема: «${quizState.topic}»`;
+    banner.innerHTML = `
+      <div>🎯 Самостоятельный тест</div>
+      <div style="font-weight:500;font-size:0.82rem;">
+        ${escapeHtml(SUBJECT_LABELS[quizState.subject])} · ${escapeHtml(topicLabel)}
+      </div>
+    `;
+    deferBtn.classList.add('hidden');
+
+    // Check if there is a pending session matching this subject & topic
+    const matchingPending = getMyPendingSessions().find(
+      s => s.subject === quizState.subject && (quizState.topic === s.topic)
+    );
+    if (matchingPending) {
+      notice.classList.remove('hidden');
+      notice.innerHTML = `
+        <div>
+          По этой теме есть занятие в статусе <strong>«Ожидает теста»</strong>.
+          Самостоятельный тест не закроет его автоматически.
+        </div>
+        <button class="btn-sm btn-primary" onclick="launchLinkedQuizBySessionId('${escapeHtml(matchingPending.id)}')">
+          Пройти тест для этого занятия
+        </button>
+      `;
+    } else {
+      notice.classList.add('hidden');
+    }
+  }
+
+  const total = quizState.availableCount || 0;
+  const passNeeded = calcPassThreshold(total);
+  quizState.passNeeded = passNeeded;
+
+  if (total === 0) {
+    details.innerHTML = `<p style="color:var(--red);font-weight:600;">Нет подходящих карточек для формирования теста. Измените фильтры.</p>`;
+    startBtn.disabled = true;
+    return;
+  }
+
+  startBtn.disabled = false;
+  details.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div class="stat-card">
+        <div class="stat-val">${total}</div>
+        <div class="stat-lbl">Вопросов без повторов</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val c-primary">${passNeeded} из ${total}</div>
+        <div class="stat-lbl">Нужно для сдачи (≥ 80%)</div>
+      </div>
+    </div>
+    <p style="font-size:0.84rem;color:var(--text-muted);">
+      ${quizState.mode === 'linked'
+        ? (quizState.sessionAlreadyCredited
+            ? 'Занятие уже зачтено. Успешная пересдача (≥ 80%) принесёт +1 к сданным тестам.'
+            : 'Ответ на все вопросы зачтёт учебное занятие (+1). Результат ≥ 80% также даст +1 к сданным тестам.')
+        : 'Самостоятельный тест не засчитывает учебное занятие, но при результате ≥ 80% даёт +1 к сданным тестам.'}
+      ${!currentProfile ? '<br><strong style="color:var(--amber);">Вы не вошли в профиль: результат не попадёт в недельное табло.</strong>' : ''}
+    </p>
+  `;
+}
+
+function deferLinkedQuiz() {
+  quizState.mode = 'standalone';
+  quizState.sessionId = null;
+  quizState.phase = 'intro';
+  prepareStandaloneQuizIntro();
+  switchMode('comp');
+}
+
+function startQuizRun() {
+  let pool = [];
+  if (quizState.mode === 'linked') {
+    const subjCards = cache[quizState.subject] || allCards;
+    pool = subjCards.filter(c => (c.topic || 'Без темы') === quizState.topic);
+  } else {
+    pool = filteredCards;
+  }
+
+  const questions = buildQuestionSet(pool, 10);
+  if (questions.length === 0) {
+    alert('Нет доступных вопросов для теста.');
+    return;
+  }
+
+  quizState.questions = questions;
+  quizState.qIndex = 0;
+  quizState.correctCount = 0;
+  quizState.passNeeded = calcPassThreshold(questions.length);
+  quizState.locked = false;
+  quizState.attemptId = generateUUID();
+  quizState.submitting = false;
+  quizState.submitted = false;
+  quizState.resultSummary = null;
+  quizState.phase = 'active';
+  renderCurrentMode();
+}
+
+function abortQuizRun() {
+  if (!confirm('Прервать тест? Незавершённый тест не даёт зачёт занятия и не идёт в таблицу.')) return;
+  quizState.phase = 'intro';
+  if (quizState.mode === 'standalone') {
+    prepareStandaloneQuizIntro();
+  }
+  renderCurrentMode();
+}
+
+function renderQuizQuestion() {
+  const banner = document.getElementById('quizActiveBanner');
+  if (quizState.mode === 'linked') {
+    banner.className = 'quiz-mode-banner linked';
+    banner.textContent = `🔗 Связанный тест занятия · ${SUBJECT_LABELS[quizState.subject]} — ${quizState.topic}`;
+  } else {
+    banner.className = 'quiz-mode-banner standalone';
+    const tLabel = quizState.topic === 'all' ? 'Все темы' : quizState.topic;
+    banner.textContent = `🎯 Самостоятельный тест · ${SUBJECT_LABELS[quizState.subject]} — ${tLabel}`;
+  }
+
+  const card = quizState.questions[quizState.qIndex];
+  const total = quizState.questions.length;
+  quizState.locked = false;
+
+  document.getElementById('quizProgressText').textContent = `Вопрос ${quizState.qIndex + 1} из ${total}`;
+  document.getElementById('quizScore').textContent = `Верно: ${quizState.correctCount} (порог: ${quizState.passNeeded})`;
   document.getElementById('quizBadges').innerHTML = renderBadgesHtml(card);
   document.getElementById('quizTopic').textContent = card.topic || '';
   document.getElementById('quizQ').textContent = card.front || '';
 
-  const pool = allCards.filter(x => x.id !== card.id && x.back !== card.back);
+  const nextBtn = document.getElementById('quizNextBtn');
+  nextBtn.classList.add('hidden');
+  nextBtn.disabled = false;
+  nextBtn.textContent = (quizState.qIndex === total - 1) ? 'Завершить тест ✓' : 'Следующий вопрос →';
+
+  // Distractors from same subject
+  const subjCards = cache[quizState.subject] || allCards;
+  const distractorPool = shuffleArray(subjCards.filter(x => x.id !== card.id && x.back && x.back !== card.back));
   const distractors = [];
   const used = new Set([card.back]);
-  while (distractors.length < 3 && pool.length > 0) {
-    const pick = pool[Math.floor(Math.random() * pool.length)];
-    if (!used.has(pick.back)) {
-      used.add(pick.back);
-      distractors.push(pick.back);
-    } else {
-      break;
+  for (const item of distractorPool) {
+    if (distractors.length >= 3) break;
+    if (!used.has(item.back)) {
+      used.add(item.back);
+      distractors.push(item.back);
     }
   }
-  const opts = [card.back, ...distractors].sort(() => Math.random() - 0.5);
+  const opts = shuffleArray([card.back, ...distractors]);
   const box = document.getElementById('quizOpts');
   box.innerHTML = '';
   opts.forEach(opt => {
     const btn = document.createElement('button');
     btn.className = 'quiz-opt';
     btn.textContent = opt;
-    btn.onclick = () => checkQuiz(btn, opt === card.back);
+    btn.onclick = () => selectQuizAnswer(btn, opt === card.back, card.back);
     box.appendChild(btn);
   });
 }
 
-function checkQuiz(btn, isCorrect) {
-  if (quizLocked) return;
-  quizLocked = true;
-  quizTotal++;
+function selectQuizAnswer(btn, isCorrect, correctBack) {
+  if (quizState.locked) return;
+  quizState.locked = true;
   if (isCorrect) {
-    quizRight++;
+    quizState.correctCount++;
     btn.classList.add('correct');
   } else {
     btn.classList.add('wrong');
     Array.from(document.getElementById('quizOpts').children).forEach(b => {
-      if (b.textContent === currentQuizCard.back) b.classList.add('correct');
+      if (b.textContent === correctBack) b.classList.add('correct');
     });
   }
-  document.getElementById('quizScore').textContent = `Счёт: ${quizRight} / ${quizTotal}`;
+  document.getElementById('quizScore').textContent =
+    `Верно: ${quizState.correctCount} (порог: ${quizState.passNeeded})`;
   document.getElementById('quizNextBtn').classList.remove('hidden');
 }
 
+async function advanceQuizQuestion() {
+  const nextBtn = document.getElementById('quizNextBtn');
+  const total = quizState.questions.length;
+
+  if (quizState.qIndex < total - 1) {
+    quizState.qIndex++;
+    renderQuizQuestion();
+    return;
+  }
+
+  // Last question -> finish and submit (strict double-click guard)
+  if (quizState.submitting || quizState.submitted) return;
+  quizState.submitting = true;
+  nextBtn.disabled = true;
+  nextBtn.textContent = 'Сохранение результата...';
+
+  await finalizeQuizAttempt();
+}
+
+async function finalizeQuizAttempt() {
+  const total = quizState.questions.length;
+  const score = quizState.correctCount;
+  const passNeeded = quizState.passNeeded;
+  const passed = score >= passNeeded;
+  const isLinked = quizState.mode === 'linked' && Boolean(quizState.sessionId);
+  const week = getTallinnWeekInfo(new Date());
+  const nowIso = new Date().toISOString();
+
+  let sessionDelta = 0;
+  let testDelta = 0;
+  let sessionAlreadyCreditedBefore = quizState.sessionAlreadyCredited;
+  let linkedTestAlreadyPassedBefore = false;
+  let syncMessage = '';
+
+  if (currentProfile) {
+    try {
+      // 1. If linked, credit study_session atomically ONLY if status is still 'pending_test'
+      if (isLinked) {
+        // Ensure session row exists in DB first (in case created offline)
+        await sbFetch('study_sessions?on_conflict=id', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=ignore-duplicates' },
+          body: {
+            id: quizState.sessionId,
+            participant_id: currentProfile.id,
+            subject: quizState.subject,
+            topic: quizState.topic,
+            status: 'pending_test',
+            created_at: nowIso
+          }
+        });
+
+        // Conditional PATCH: updates ONLY if status = 'pending_test'
+        const updatedRows = await sbFetch(
+          `study_sessions?id=eq.${quizState.sessionId}&status=eq.pending_test`,
+          {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: {
+              status: 'completed',
+              credited_at: nowIso,
+              credited_week: week.weekKey
+            }
+          }
+        );
+
+        if (Array.isArray(updatedRows) && updatedRows.length > 0) {
+          sessionDelta = 1;
+          sessionAlreadyCreditedBefore = false;
+        } else {
+          sessionDelta = 0;
+          sessionAlreadyCreditedBefore = true;
+        }
+
+        // Remove from local pending cache
+        const localPending = loadJsonStorage(STORAGE_KEYS.pendingSessions, [])
+          .filter(s => s.id !== quizState.sessionId);
+        saveJsonStorage(STORAGE_KEYS.pendingSessions, localPending);
+      }
+
+      // 2. Record test_attempt with unique attemptId (idempotent against double-clicks)
+      // Also check if a passed linked attempt already exists for this session
+      if (isLinked && passed) {
+        const existingPassed = await sbFetch(
+          `test_attempts?select=id&session_id=eq.${quizState.sessionId}&passed=eq.true&limit=1`
+        );
+        if (Array.isArray(existingPassed) && existingPassed.length > 0) {
+          linkedTestAlreadyPassedBefore = true;
+        }
+      }
+
+      if (!linkedTestAlreadyPassedBefore) {
+        try {
+          const inserted = await sbFetch('test_attempts?on_conflict=id', {
+            method: 'POST',
+            headers: { 'Prefer': 'resolution=ignore-duplicates,return=representation' },
+            body: {
+              id: quizState.attemptId,
+              participant_id: currentProfile.id,
+              session_id: isLinked ? quizState.sessionId : null,
+              is_linked: isLinked,
+              subject: quizState.subject,
+              topic: quizState.topic === 'all' ? 'Все темы' : quizState.topic,
+              score: score,
+              total: total,
+              passed: passed,
+              completed_at: nowIso,
+              credited_week: week.weekKey
+            }
+          });
+          if (passed && Array.isArray(inserted) && inserted.length > 0) {
+            testDelta = 1;
+          }
+        } catch (err) {
+          // 409 Conflict from idx_one_passed_linked_per_session means already passed once
+          if (err.status === 409 || err.code === '23505') {
+            linkedTestAlreadyPassedBefore = true;
+            testDelta = 0;
+          } else {
+            throw err;
+          }
+        }
+      }
+
+      syncMessage = `✅ Результат синхронизирован с табло (неделя ${week.label}, ${COMPETITION_TZ}).`;
+    } catch (e) {
+      syncMessage = `⚠️ Ошибка сохранения на сервер: ${e.message || 'нет сети'}.`;
+    }
+  } else {
+    syncMessage = 'ℹ️ Вы не вошли в профиль участника, поэтому результат не записан в общее недельное табло.';
+  }
+
+  quizState.submitted = true;
+  quizState.submitting = false;
+  quizState.resultSummary = {
+    isLinked,
+    sessionId: quizState.sessionId,
+    subject: quizState.subject,
+    topic: quizState.topic,
+    score,
+    total,
+    passNeeded,
+    passed,
+    sessionDelta,
+    testDelta,
+    sessionAlreadyCreditedBefore,
+    linkedTestAlreadyPassedBefore,
+    syncMessage
+  };
+  quizState.phase = 'result';
+
+  // Refresh scoreboard in background
+  if (currentProfile) {
+    refreshCompetitionData();
+  }
+  renderCurrentMode();
+}
+
+function renderQuizResult() {
+  const r = quizState.resultSummary;
+  if (!r) return;
+
+  const banner = document.getElementById('quizResultBanner');
+  banner.className = 'quiz-mode-banner ' + (r.isLinked ? 'linked' : 'standalone');
+  banner.textContent = r.isLinked
+    ? `🔗 Итог связанного теста · ${SUBJECT_LABELS[r.subject]} — ${r.topic}`
+    : `🎯 Итог самостоятельного теста · ${SUBJECT_LABELS[r.subject]} — ${r.topic === 'all' ? 'Все темы' : r.topic}`;
+
+  // Outcome 1: Study session credit
+  let sessionBoxClass = '';
+  let sessionTitle = '';
+  let sessionDesc = '';
+  if (r.isLinked) {
+    if (r.sessionDelta === 1) {
+      sessionBoxClass = 'ok';
+      sessionTitle = '✅ Занятие зачтено (+1 к зачтённым занятиям)';
+      sessionDesc = 'Вы завершили связанный тест по теме занятия — зачёт начислен в текущую неделю.';
+    } else if (r.sessionAlreadyCreditedBefore) {
+      sessionBoxClass = '';
+      sessionTitle = 'ℹ️ Занятие уже было зачтено ранее (+0 дополнительно)';
+      sessionDesc = 'Одно учебное занятие засчитывается ровно один раз.';
+    } else {
+      sessionBoxClass = 'warn';
+      sessionTitle = '⚠️ Занятие не зачтено (+0)';
+      sessionDesc = 'Войдите в профиль и проверьте подключение к интернету.';
+    }
+  } else {
+    sessionBoxClass = '';
+    sessionTitle = 'ℹ️ Занятие: +0 (самостоятельный тест)';
+    sessionDesc = 'Самостоятельный тест из вкладки «Тест» не засчитывает учебное занятие.';
+  }
+
+  // Outcome 2: Passed test credit
+  let testBoxClass = '';
+  let testTitle = '';
+  let testDesc = '';
+  if (r.passed) {
+    if (r.linkedTestAlreadyPassedBefore) {
+      testBoxClass = '';
+      testTitle = `Тест: ${r.score} из ${r.total} (порог ${r.passNeeded}) — +0 дополнительно`;
+      testDesc = 'Успешная сдача связанного теста уже была засчитана ранее в рамках этого занятия.';
+    } else if (r.testDelta === 1) {
+      testBoxClass = 'ok';
+      testTitle = `✅ Тест сдан: ${r.score} из ${r.total} (+1 к сданным тестам)`;
+      testDesc = `Порог сдачи ${r.passNeeded} из ${r.total} (≥ 80%) выполнен.`;
+    } else {
+      testBoxClass = 'ok';
+      testTitle = `✅ Тест сдан: ${r.score} из ${r.total} (порог ${r.passNeeded})`;
+      testDesc = 'Войдите в профиль, чтобы сданные тесты учитывались в табло.';
+    }
+  } else {
+    testBoxClass = 'warn';
+    testTitle = `Тест: ${r.score} из ${r.total}. Для сдачи нужно ${r.passNeeded}. (+0 к сданным тестам)`;
+    testDesc = r.isLinked
+      ? 'Порог 80% не достигнут. Вы можете пересдать тест этого занятия, чтобы получить +1 к сданным тестам.'
+      : 'Порог 80% не достигнут. Попробуйте пройти самостоятельный тест ещё раз.';
+  }
+
+  document.getElementById('quizResultCards').innerHTML = `
+    <div class="quiz-summary-box ${sessionBoxClass}">
+      <h4>${sessionTitle}</h4>
+      <p>${sessionDesc}</p>
+    </div>
+    <div class="quiz-summary-box ${testBoxClass}">
+      <h4>${testTitle}</h4>
+      <p>${testDesc}</p>
+    </div>
+  `;
+
+  document.getElementById('quizSyncStatus').textContent = r.syncMessage;
+
+  const actions = [];
+  if (r.isLinked && !r.passed && !r.linkedTestAlreadyPassedBefore) {
+    actions.push(`<button class="btn btn-primary" onclick="retakeCurrentLinkedQuiz()">🔁 Пересдать тест этого занятия</button>`);
+  }
+  if (!r.isLinked) {
+    actions.push(`<button class="btn btn-primary" onclick="restartStandaloneQuiz()">🎯 Новый самостоятельный тест</button>`);
+  }
+  actions.push(`<button class="btn btn-sec" onclick="switchMode('comp')">🏆 Открыть недельное табло</button>`);
+  actions.push(`<button class="btn btn-sec" onclick="switchMode('cards')">🗂 К карточкам</button>`);
+
+  document.getElementById('quizResultActions').innerHTML = actions.join('');
+}
+
+function retakeCurrentLinkedQuiz() {
+  const r = quizState.resultSummary;
+  if (!r || !r.sessionId) return;
+  launchLinkedQuiz({
+    id: r.sessionId,
+    subject: r.subject,
+    topic: r.topic,
+    status: 'completed'
+  }, true);
+}
+
+function restartStandaloneQuiz() {
+  prepareStandaloneQuizIntro();
+  renderCurrentMode();
+}
+
+/* ==================== COMPETITION VIEW ==================== */
+function renderCompetitionView() {
+  const week = getTallinnWeekInfo(new Date());
+  document.getElementById('compWeekLabel').textContent =
+    `Неделя Пн–Вс: ${week.label} (${COMPETITION_TZ})${TEST_DATE_OVERRIDE ? ' · тест-дата ' + TEST_DATE_OVERRIDE : ''}`;
+
+  const alertBox = document.getElementById('compSyncAlert');
+  if (compData.lastError) {
+    alertBox.textContent = compData.lastError;
+    alertBox.classList.remove('hidden');
+  } else {
+    alertBox.classList.add('hidden');
+  }
+
+  const participants = compData.participants.length > 0 ? compData.participants : participantsList;
+  const stats = participants.map(p => {
+    const creditedSessions = (compData.sessions || []).filter(
+      s => s.participant_id === p.id && s.status === 'completed' && s.credited_week === week.weekKey
+    ).length;
+    const passedTests = (compData.attempts || []).filter(
+      a => a.participant_id === p.id && a.passed === true && a.credited_week === week.weekKey
+    ).length;
+    return {
+      id: p.id,
+      name: p.display_name,
+      sessions: creditedSessions,
+      tests: passedTests
+    };
+  });
+
+  // Determine leaders per column separately
+  const maxSessions = Math.max(...stats.map(s => s.sessions), 0);
+  const maxTests = Math.max(...stats.map(s => s.tests), 0);
+  const sessionLeaders = stats.filter(s => s.sessions === maxSessions);
+  const testLeaders = stats.filter(s => s.tests === maxTests);
+
+  const isSessionTie = sessionLeaders.length !== 1;
+  const isTestTie = testLeaders.length !== 1;
+
+  document.getElementById('compTableBody').innerHTML = stats.map(s => {
+    const isMe = currentProfile && currentProfile.id === s.id;
+    const leadS = !isSessionTie && s.sessions === maxSessions && maxSessions > 0;
+    const leadT = !isTestTie && s.tests === maxTests && maxTests > 0;
+    return `
+      <tr>
+        <td>
+          <strong>${escapeHtml(s.name)}</strong>
+          ${isMe ? '<span class="badge badge-date" style="margin-left:5px;">Вы</span>' : ''}
+        </td>
+        <td class="num ${leadS ? 'leader-cell' : ''}">${s.sessions}${leadS ? ' 👑' : ''}</td>
+        <td class="num ${leadT ? 'leader-cell' : ''}">${s.tests}${leadT ? ' 👑' : ''}</td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('compLeadersRow').innerHTML = `
+    <div class="leader-card">
+      <div class="lbl">Лидер по занятиям</div>
+      <div class="val">${isSessionTie ? '🤝 Ничья' : '👑 ' + escapeHtml(sessionLeaders[0].name)}</div>
+    </div>
+    <div class="leader-card">
+      <div class="lbl">Лидер по тестам</div>
+      <div class="val">${isTestTie ? '🤝 Ничья' : '👑 ' + escapeHtml(testLeaders[0].name)}</div>
+    </div>
+  `;
+
+  // Pending sessions for logged-in participant
+  const pendingBox = document.getElementById('compPendingList');
+  if (!currentProfile) {
+    pendingBox.innerHTML = `<div style="margin-top:8px;font-size:0.84rem;color:var(--text-muted);">Войдите в свой профиль, чтобы видеть ожидающие занятия.</div>`;
+  } else {
+    const myPending = getMyPendingSessions();
+    if (myPending.length === 0) {
+      pendingBox.innerHTML = `<div style="margin-top:8px;font-size:0.84rem;color:var(--text-muted);">Нет занятий, ожидающих теста.</div>`;
+    } else {
+      pendingBox.innerHTML = myPending.map(s => `
+        <div class="session-item">
+          <div class="session-item-info">
+            <div class="session-item-title">${escapeHtml(SUBJECT_LABELS[s.subject] || s.subject)} — ${escapeHtml(s.topic)}</div>
+            <div class="session-item-meta">20 мин завершены: ${formatShortDateTallinn(s.created_at)} · Статус: Ожидает теста</div>
+          </div>
+          <button class="btn-sm btn-primary" onclick="launchLinkedQuizBySessionId('${escapeHtml(s.id)}', false)">
+            🎯 Пройти тест по теме
+          </button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Retakeable sessions
+  const retakePanel = document.getElementById('compRetakePanel');
+  const retakeBox = document.getElementById('compRetakeList');
+  const myRetakes = getMyRetakeableSessions();
+  if (currentProfile && myRetakes.length > 0) {
+    retakePanel.classList.remove('hidden');
+    retakeBox.innerHTML = myRetakes.map(s => `
+      <div class="session-item">
+        <div class="session-item-info">
+          <div class="session-item-title">${escapeHtml(SUBJECT_LABELS[s.subject] || s.subject)} — ${escapeHtml(s.topic)}</div>
+          <div class="session-item-meta">Занятие зачтено: ${formatShortDateTallinn(s.credited_at)} · Тест ещё не сдан</div>
+        </div>
+        <button class="btn-sm btn-repeat" onclick="launchLinkedQuizBySessionId('${escapeHtml(s.id)}', true)">
+          🔁 Пересдать тест
+        </button>
+      </div>
+    `).join('');
+  } else {
+    retakePanel.classList.add('hidden');
+  }
+
+  // Week read-only log
+  const nameMap = Object.fromEntries(participants.map(p => [p.id, p.display_name]));
+  const weekEvents = [];
+  (compData.sessions || [])
+    .filter(s => s.status === 'completed' && s.credited_week === week.weekKey)
+    .forEach(s => weekEvents.push({
+      ts: s.credited_at || s.created_at,
+      html: `<strong>${escapeHtml(nameMap[s.participant_id] || s.participant_id)}</strong> · Занятие зачтено: ${escapeHtml(SUBJECT_LABELS[s.subject] || s.subject)} — «${escapeHtml(s.topic)}»`,
+      badge: '<span class="badge badge-green">+1 занятие</span>'
+    }));
+  (compData.attempts || [])
+    .filter(a => a.credited_week === week.weekKey)
+    .forEach(a => weekEvents.push({
+      ts: a.completed_at,
+      html: `<strong>${escapeHtml(nameMap[a.participant_id] || a.participant_id)}</strong> · ${a.is_linked ? 'Связанный тест' : 'Самостоятельный тест'}: ${escapeHtml(a.topic)} (${a.score}/${a.total})`,
+      badge: a.passed
+        ? '<span class="badge badge-green">+1 тест</span>'
+        : '<span class="badge">Не сдан (0)</span>'
+    }));
+
+  weekEvents.sort((a, b) => new Date(b.ts) - new Date(a.ts));
+  const logEl = document.getElementById('compWeekLog');
+  if (weekEvents.length === 0) {
+    logEl.innerHTML = 'Пока нет записей за эту неделю.';
+  } else {
+    logEl.innerHTML = weekEvents.slice(0, 30).map(ev => `
+      <div class="log-item">
+        <div>${ev.html} <span style="color:var(--text-muted);font-size:0.76rem;">(${formatShortDateTallinn(ev.ts)})</span></div>
+        <div>${ev.badge}</div>
+      </div>
+    `).join('');
+  }
+}
+
+/* ==================== REFERENCE VIEW (PRESERVED) ==================== */
 function renderRef() {
   const q = (document.getElementById('refSearch').value || '').trim().toLowerCase();
   const list = q ? filteredCards.filter(c =>
@@ -714,6 +2405,7 @@ function renderRef() {
   `).join('');
 }
 
+/* ==================== SETTINGS & BACKUP (PRESERVED) ==================== */
 function openSettings() { document.getElementById('settingsModal').classList.add('open'); }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
 
@@ -762,11 +2454,11 @@ function resetSubjectProgress() {
   closeSettings();
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
+/* ==================== INIT ==================== */
+renderProfilePill();
+startStudyTicker();
 loadSubject('history');
+refreshCompetitionData();
 </script>
 </body>
 </html>
